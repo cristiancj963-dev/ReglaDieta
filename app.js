@@ -1,326 +1,344 @@
 /**
  * ==============================================================================
  * DISEÑA TU PLATO SALUDABLE - LÓGICA DE APLICACIÓN (app.js)
- * Panel interactivo para móvil basado en la regla 50-20-20-10 y sus adaptaciones.
+ * Flujo Guiado Paso a Paso y Compatibilidad Inteligente ("Sin pensar")
  * ==============================================================================
  */
 
-// Base de Datos de Alimentos Limpios y Reales (No ultraprocesados)
+// 1. BASE DE DATOS DE ALIMENTOS LIMPIOS Y REALES
 const FOOD_DATABASE = [
-  // --- VERDURAS Y HORTALIZAS SIN ALMIDÓN (50%) ---
-  {
-    id: "v_brocoli",
-    name: "Brócoli al vapor",
-    emoji: "🥦",
-    category: "veggies",
-    macroType: "veggie",
-    tag: "Fibra y Sulforafano",
-    cleanTip: "Cocínalo al vapor 4-5 minutos para conservar sus nutrientes y textura crujiente.",
-    portion: "Llenar la mitad del plato (~200g)",
-    isWhole: true
-  },
-  {
-    id: "v_espinacas",
-    name: "Espinacas baby",
-    emoji: "🍃",
-    category: "veggies",
-    macroType: "veggie",
-    tag: "Hierro y Folatos",
-    cleanTip: "Crudas en ensalada o salteadas con un toque de ajo picado.",
-    portion: "2 puñados grandes crudas (~150g)",
-    isWhole: true
-  },
-  {
-    id: "v_tomates",
-    name: "Tomates cherry frescos",
-    emoji: "🍅",
-    category: "veggies",
-    macroType: "veggie",
-    tag: "Licopeno antioxidante",
-    cleanTip: "Frescos o asados en sartén con hierbas aromáticas.",
-    portion: "1 taza de cherrys (~150g)",
-    isWhole: true
-  },
-  {
-    id: "v_calabacin",
-    name: "Calabacín a la plancha",
-    emoji: "🥒",
-    category: "veggies",
-    macroType: "veggie",
-    tag: "Muy bajo en calorías",
-    cleanTip: "En rodajas a la plancha con orégano o en espirales tipo espagueti.",
-    portion: "1 calabacín mediano (~200g)",
-    isWhole: true
-  },
-  {
-    id: "v_esparragos",
-    name: "Espárragos trigueros",
-    emoji: "🥬",
-    category: "veggies",
-    macroType: "veggie",
-    tag: "Diurético natural",
-    cleanTip: "A la plancha con fuego vivo y una pizca de sal marina.",
-    portion: "1 manojo (~150g)",
-    isWhole: true
-  },
-  {
-    id: "v_pimientos",
-    name: "Pimientos asados",
-    emoji: "🫑",
-    category: "veggies",
-    macroType: "veggie",
-    tag: "Vitamina C x3 de la naranja",
-    cleanTip: "Asados enteros al horno y pelados, o salteados en tiras.",
-    portion: "1 pimiento grande (~180g)",
-    isWhole: true
-  },
-  {
-    id: "v_champinones",
-    name: "Champiñones al ajillo",
-    emoji: "🍄",
-    category: "veggies",
-    macroType: "veggie",
-    tag: "Sabor umami saciante",
-    cleanTip: "Salteados con ajo fresco laminado y perejil picado.",
-    portion: "1 plato hondo (~180g)",
-    isWhole: true
-  },
-  {
-    id: "v_rucula",
-    name: "Rúcula y Canónigos",
-    emoji: "🥗",
-    category: "veggies",
-    macroType: "veggie",
-    tag: "Hojas amargas digestivas",
-    cleanTip: "Base cruda para ensaladas refrescantes con aliño virgen extra.",
-    portion: "2 puñados abundantes (~100g)",
-    isWhole: true
-  },
-  {
-    id: "v_coliflor",
-    name: "Coliflor al horno o vapor",
-    emoji: "🥦",
-    category: "veggies",
-    macroType: "veggie",
-    tag: "Versátil y ligera",
-    cleanTip: "En arbolitos asados con pimentón o triturada tipo falso arroz.",
-    portion: "Media coliflor mediana (~200g)",
-    isWhole: true
-  },
-  {
-    id: "v_judias",
-    name: "Judías verdes al vapor",
-    emoji: "🥢",
-    category: "veggies",
-    macroType: "veggie",
-    tag: "Fibra soluble",
-    cleanTip: "Hervidas o al vapor al dente con unas gotas de limón.",
-    portion: "1 taza colmada (~180g)",
-    isWhole: true
-  },
-
-  // --- PROTEÍNAS MAGRAS (20-25%) ---
-  {
-    id: "p_pollo",
-    name: "Pechuga de pollo campero",
-    emoji: "🍗",
-    category: "lean-protein",
-    macroType: "protein_lean",
-    tag: "Proteína pura 0% grasa",
-    cleanTip: "A la plancha con limón, romero o cúrcuma. Evita empanados.",
-    portion: "Tamaño de la palma de la mano (~130-150g)",
-    isWhole: true
-  },
-  {
-    id: "p_pavo",
-    name: "Solomillo de pavo limpio",
-    emoji: "🦃",
-    category: "lean-protein",
-    macroType: "protein_lean",
-    tag: "Muy digestible",
-    cleanTip: "Al grill bien especiado con tomillo y pimienta negra.",
-    portion: "Palma de la mano (~140g)",
-    isWhole: true
-  },
-  {
-    id: "p_merluza",
-    name: "Merluza o Bacalao fresco",
-    emoji: "🐟",
-    category: "lean-protein",
-    macroType: "protein_lean",
-    tag: "Pescado blanco magro",
-    cleanTip: "Al vapor, al horno con verduras o en papillote.",
-    portion: "Filete mediano (~150-180g)",
-    isWhole: true
-  },
-  {
-    id: "p_claras",
-    name: "Claras de huevo / Revuelto",
-    emoji: "🥚",
-    category: "lean-protein",
-    macroType: "protein_lean",
-    tag: "Máximo valor biológico",
-    cleanTip: "En tortilla francesa fina o revuelto con verduras.",
-    portion: "3-4 claras o 1 huevo + 2 claras (~120g)",
-    isWhole: true
-  },
-  {
-    id: "p_gambas",
-    name: "Gambas o Langostinos",
-    emoji: "🦐",
-    category: "lean-protein",
-    macroType: "protein_lean",
-    tag: "Proteína marina magra",
-    cleanTip: "A la plancha con ajo laminado o salteadas.",
-    portion: "8-10 unidades (~130g peladas)",
-    isWhole: true
-  },
-  {
-    id: "p_tofu",
-    name: "Tofu firme natural",
-    emoji: "🧊",
-    category: "lean-protein",
-    macroType: "protein_lean",
-    tag: "Proteína vegetal limpia",
-    cleanTip: "Marínalo con soja baja en sal y dóralo en sartén crujiente.",
-    portion: "Bloque (~150g)",
-    isWhole: true
-  },
-  {
-    id: "p_lomo",
-    name: "Lomo de cerdo magro",
-    emoji: "🥩",
-    category: "lean-protein",
-    macroType: "protein_lean",
-    tag: "Corte magro limpio",
-    cleanTip: "Retira el borde de grasa visible y cocina a la plancha.",
-    portion: "2 filetes finos (~130g)",
-    isWhole: true
-  },
-
-  // --- PROTEÍNA CON GRASA INTEGRADA (PROTEÍNA + GRASA ~30%) ---
+  // --- PROTEÍNAS CON GRASA NATURAL INTEGRADA (CUBREN PROTEÍNA + GRASA) ---
   {
     id: "pg_salmon",
     name: "Salmón fresco salvaje",
     emoji: "🍣",
-    category: "fatty-protein",
-    macroType: "protein_fatty",
-    tag: "Omega-3 + Proteína",
-    cleanTip: "¡OJO! Al cocinarlo no agregues aceite: suéltalo en su propia grasa a fuego medio.",
+    stepGroup: "main",
+    macroType: "main_fatty",
+    badgeLabel: "Proteína + Grasa",
+    cleanTip: "Cocínalo en su propia grasa sin añadir aceite extra a fuego medio.",
     portion: "1 lomo (~150g). Cubre proteína y grasa del plato.",
-    isWhole: true
+    incompatibleWith: ["f_nueces", "f_almendras", "f_aguacate", "f_semillas", "f_aceitunas"],
+    incompatibilityReason: "El salmón ya aporta sus grasas saludables (Omega-3). No mezclar con frutos secos ni aceites abundantes."
   },
   {
     id: "pg_huevos",
     name: "Huevos camperos enteros",
     emoji: "🍳",
-    category: "fatty-protein",
-    macroType: "protein_fatty",
-    tag: "Proteína + Colina + Grasa",
-    cleanTip: "Pochados, a la plancha con gota mínima o pasados por agua.",
-    portion: "2 huevos enteros. Ya aportan grasa saludable.",
-    isWhole: true
+    stepGroup: "main",
+    macroType: "main_fatty",
+    badgeLabel: "Proteína + Grasa",
+    cleanTip: "Pochados o a la plancha con sartén antiadherente. La yema ya aporta la grasa.",
+    portion: "2 huevos enteros medianos.",
+    incompatibleWith: ["f_nueces", "f_almendras", "f_aguacate", "f_semillas", "f_aceitunas"],
+    incompatibilityReason: "Las yemas de huevo ya cubren la grasa saludable. No necesitas añadir frutos secos ni grasa extra."
   },
   {
     id: "pg_sardinas",
     name: "Sardinas o Caballa fresca",
     emoji: "🐟",
-    category: "fatty-protein",
-    macroType: "protein_fatty",
-    tag: "Bomba de Omega-3 y Calcio",
-    cleanTip: "A la plancha o al horno enteras con sal marina.",
-    portion: "3-4 sardinas (~150g). No necesitas grasa añadida.",
-    isWhole: true
+    stepGroup: "main",
+    macroType: "main_fatty",
+    badgeLabel: "Proteína + Grasa",
+    cleanTip: "Al horno con limón o a la plancha con sal marina.",
+    portion: "3-4 sardinas (~150g). Pescado azul rico en omega-3.",
+    incompatibleWith: ["f_nueces", "f_almendras", "f_aguacate", "f_semillas", "f_aceitunas"],
+    incompatibilityReason: "Pescado azul denso en grasas antiinflamatorias: cuota de lípidos cubierta."
   },
   {
     id: "pg_ternera",
-    name: "Lomo o Solomillo de ternera",
+    name: "Lomo de ternera limpio",
     emoji: "🥩",
-    category: "fatty-protein",
-    macroType: "protein_fatty",
-    tag: "Hierro hemo + Grasa natural",
-    cleanTip: "Sellado a la plancha sin mantequillas ni aceites extra.",
-    portion: "Corte limpio (~140g). Combina proteína y grasa.",
-    isWhole: true
+    stepGroup: "main",
+    macroType: "main_fatty",
+    badgeLabel: "Proteína + Grasa",
+    cleanTip: "Sellado a la plancha vuelta y vuelta sin mantequillas añadidas.",
+    portion: "Corte limpio (~140g). Grasa infiltrada natural.",
+    incompatibleWith: ["f_nueces", "f_almendras", "f_aguacate", "f_semillas", "f_aceitunas"],
+    incompatibilityReason: "La carne de ternera ya contiene suficiente grasa intramuscular natural."
   },
   {
     id: "pg_atun",
     name: "Atún rojo fresco en taco",
     emoji: "🐟",
-    category: "fatty-protein",
-    macroType: "protein_fatty",
-    tag: "Pescado azul denso",
-    cleanTip: "Marcado 1 minuto por lado para que quede jugoso.",
-    portion: "1 taco (~140g)",
-    isWhole: true
+    stepGroup: "main",
+    macroType: "main_fatty",
+    badgeLabel: "Proteína + Grasa",
+    cleanTip: "Marcado 1 minuto por cada lado para mantener la jugosidad.",
+    portion: "1 taco (~140g). Proteína marina densa.",
+    incompatibleWith: ["f_nueces", "f_almendras", "f_aguacate", "f_semillas", "f_aceitunas"],
+    incompatibilityReason: "Pescado azul graso: no requiere adición de frutos secos ni grasas densas."
   },
 
-  // --- CARBOHIDRATOS COMPLEJOS / GRANOS ENTEROS (20-25%) ---
+  // --- PROTEÍNAS MAGRAS (REQUIEREN GRASA SALUDABLE APARTE) ---
+  {
+    id: "p_pollo",
+    name: "Pechuga de pollo campero",
+    emoji: "🍗",
+    stepGroup: "main",
+    macroType: "main_lean",
+    badgeLabel: "Proteína Magra",
+    cleanTip: "A la plancha con limón, romero o curry suave. Cero ultraprocesados.",
+    portion: "Palma de la mano (~130-150g).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
+  },
+  {
+    id: "p_pavo",
+    name: "Solomillo de pavo limpio",
+    emoji: "🦃",
+    stepGroup: "main",
+    macroType: "main_lean",
+    badgeLabel: "Proteína Magra",
+    cleanTip: "Al grill con pimienta y orégano. Muy digestivo y ligero.",
+    portion: "Palma de la mano (~140g).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
+  },
+  {
+    id: "p_merluza",
+    name: "Merluza o Bacalao fresco",
+    emoji: "🐟",
+    stepGroup: "main",
+    macroType: "main_lean",
+    badgeLabel: "Proteína Magra",
+    cleanTip: "Al vapor con verduras o en papillote al horno con toque de ajo.",
+    portion: "Filete mediano (~160-180g). Pescado blanco magro.",
+    incompatibleWith: [],
+    incompatibilityReason: ""
+  },
+  {
+    id: "p_claras",
+    name: "Claras de huevo / Revuelto",
+    emoji: "🥚",
+    stepGroup: "main",
+    macroType: "main_lean",
+    badgeLabel: "Proteína Magra",
+    cleanTip: "En tortilla fina o revuelto ligero con espinacas y especias.",
+    portion: "3-4 claras (~120g). Máximo valor biológico.",
+    incompatibleWith: [],
+    incompatibilityReason: ""
+  },
+  {
+    id: "p_gambas",
+    name: "Gambas o Langostinos",
+    emoji: "🦐",
+    stepGroup: "main",
+    macroType: "main_lean",
+    badgeLabel: "Proteína Magra",
+    cleanTip: "A la plancha con ajo picado y perejil fresco.",
+    portion: "8-10 piezas peladas (~130g). Proteína marina magra.",
+    incompatibleWith: [],
+    incompatibilityReason: ""
+  },
+  {
+    id: "p_tofu",
+    name: "Tofu firme natural",
+    emoji: "🧊",
+    stepGroup: "main",
+    macroType: "main_lean",
+    badgeLabel: "Proteína Magra Vegetal",
+    cleanTip: "Prensado, marinado con soja baja en sal y dorado en sartén.",
+    portion: "Bloque (~150g). Proteína vegetal limpia.",
+    incompatibleWith: [],
+    incompatibilityReason: ""
+  },
+
+  // --- BASE DE LEGUMBRES (CUBREN CARBOHIDRATO + PROTEÍNA VEGETAL) ---
+  {
+    id: "l_garbanzos",
+    name: "Garbanzos tostados o hummus",
+    emoji: "🧆",
+    stepGroup: "main",
+    macroType: "main_legume",
+    badgeLabel: "Legumbre (HC + Proteína)",
+    cleanTip: "Al horno con pimentón como snack crujiente o cocidos con verduras.",
+    portion: "1 taza colmada (~160g cocidos).",
+    incompatibleWith: ["c_arroz", "c_patata", "c_boniato", "c_pan"],
+    incompatibilityReason: "Los garbanzos ya aportan tus carbohidratos complejos. Se descartan arroces y patatas para evitar exceso glucémico."
+  },
+  {
+    id: "l_lentejas",
+    name: "Lentejas pardinas",
+    emoji: "🫘",
+    stepGroup: "main",
+    macroType: "main_legume",
+    badgeLabel: "Legumbre (HC + Proteína)",
+    cleanTip: "En ensalada fresca con hortalizas o estofadas con verduras sin embutidos.",
+    portion: "1 taza cocidas (~160g). Rica en hierro y fibra saciante.",
+    incompatibleWith: ["c_arroz", "c_patata", "c_boniato", "c_pan"],
+    incompatibilityReason: "Las lentejas ya cubren tus hidratos y proteína vegetal. No necesitas arroz ni patata."
+  },
+  {
+    id: "l_alubias",
+    name: "Alubias blancas o negras",
+    emoji: "🫘",
+    stepGroup: "main",
+    macroType: "main_legume",
+    badgeLabel: "Legumbre (HC + Proteína)",
+    cleanTip: "Cocidas con laurel, cebolla y pimientos en ensalada templada.",
+    portion: "1 taza cocidas (~160g). Gran saciedad prebiótica.",
+    incompatibleWith: ["c_arroz", "c_patata", "c_boniato", "c_pan"],
+    incompatibilityReason: "Las alubias ya cubren la porción de carbohidratos. Se eliminan féculas adicionales."
+  },
+
+  // --- VERDURAS Y HORTALIZAS SIN ALMIDÓN (50% DEL PLATO) ---
+  {
+    id: "v_brocoli",
+    name: "Brócoli al vapor",
+    emoji: "🥦",
+    stepGroup: "veggie",
+    macroType: "veggie",
+    badgeLabel: "Verdura (50%)",
+    cleanTip: "Al vapor 4 minutos al dente para preservar su sulforafano.",
+    portion: "Mitad del plato (~200g).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
+  },
+  {
+    id: "v_espinacas",
+    name: "Espinacas baby",
+    emoji: "🍃",
+    stepGroup: "veggie",
+    macroType: "veggie",
+    badgeLabel: "Verdura (50%)",
+    cleanTip: "Crudas en ensalada o salteadas con ajo laminado.",
+    portion: "2 puñados grandes (~150g).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
+  },
+  {
+    id: "v_tomates",
+    name: "Tomates cherry frescos",
+    emoji: "🍅",
+    stepGroup: "veggie",
+    macroType: "veggie",
+    badgeLabel: "Verdura (50%)",
+    cleanTip: "Frescos o asados en sartén con romero y sal en escamas.",
+    portion: "1 taza (~150g). Licopeno antioxidante.",
+    incompatibleWith: [],
+    incompatibilityReason: ""
+  },
+  {
+    id: "v_calabacin",
+    name: "Calabacín a la plancha",
+    emoji: "🥒",
+    stepGroup: "veggie",
+    macroType: "veggie",
+    badgeLabel: "Verdura (50%)",
+    cleanTip: "En rodajas con orégano o en espirales tipo zoodles.",
+    portion: "1 calabacín mediano (~200g).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
+  },
+  {
+    id: "v_esparragos",
+    name: "Espárragos trigueros",
+    emoji: "🥬",
+    stepGroup: "veggie",
+    macroType: "veggie",
+    badgeLabel: "Verdura (50%)",
+    cleanTip: "A la plancha a fuego vivo con sal marina.",
+    portion: "1 manojo (~150g). Diurético y crujiente.",
+    incompatibleWith: [],
+    incompatibilityReason: ""
+  },
+  {
+    id: "v_pimientos",
+    name: "Pimientos asados",
+    emoji: "🫑",
+    stepGroup: "veggie",
+    macroType: "veggie",
+    badgeLabel: "Verdura (50%)",
+    cleanTip: "Asados al horno y pelados, o salteados en tiras.",
+    portion: "1 pimiento grande (~180g). Triple de vitamina C.",
+    incompatibleWith: [],
+    incompatibilityReason: ""
+  },
+  {
+    id: "v_champinones",
+    name: "Champiñones al ajillo",
+    emoji: "🍄",
+    stepGroup: "veggie",
+    macroType: "veggie",
+    badgeLabel: "Verdura (50%)",
+    cleanTip: "Salteados con ajo fresco y perejil picado.",
+    portion: "1 plato hondo (~180g). Sabor umami saciante.",
+    incompatibleWith: [],
+    incompatibilityReason: ""
+  },
+  {
+    id: "v_rucula",
+    name: "Rúcula y Canónigos",
+    emoji: "🥗",
+    stepGroup: "veggie",
+    macroType: "veggie",
+    badgeLabel: "Verdura (50%)",
+    cleanTip: "Base verde crujiente para ensaladas con hojas amargas digestivas.",
+    portion: "2 puñados colmados (~100g).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
+  },
+
+  // --- CARBOHIDRATOS COMPLEJOS / GRANOS ENTEROS (20%) ---
   {
     id: "c_boniato",
     name: "Boniato / Batata asada",
     emoji: "🍠",
-    category: "carbs",
+    stepGroup: "carb",
     macroType: "carb",
-    tag: "Betacarotenos y saciedad",
+    badgeLabel: "Hidrato Complejo",
     cleanTip: "Asado al horno con piel. Su dulzor natural evita cualquier salsa.",
-    portion: "1 puño cerrado (~120-150g)",
-    isWhole: true
+    portion: "1 puño cerrado (~130g).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
   },
   {
     id: "c_arroz",
     name: "Arroz basmati o integral",
     emoji: "🍚",
-    category: "carbs",
+    stepGroup: "carb",
     macroType: "carb",
-    tag: "Energía sostenida",
-    cleanTip: "Hervido al punto con laurel y ajo entero. Mejor integral.",
-    portion: "1 taza pequeña cocido (~120g)",
-    isWhole: true
+    badgeLabel: "Hidrato Complejo",
+    cleanTip: "Hervido al dente con hoja de laurel y diente de ajo.",
+    portion: "1 taza pequeña cocido (~120g).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
   },
   {
     id: "c_patata",
-    name: "Patata cocida al vapor",
+    name: "Patata al vapor (enfriada)",
     emoji: "🥔",
-    category: "carbs",
+    stepGroup: "carb",
     macroType: "carb",
-    tag: "Almidón resistente",
-    cleanTip: "Hervirla y enfriarla 12h en nevera crea almidón resistente pro-microbiota.",
-    portion: "1 patata mediana (~130g)",
-    isWhole: true
+    badgeLabel: "Hidrato Complejo",
+    cleanTip: "Cocida y enfriada en nevera 12h: genera almidón resistente que nutre tu microbiota.",
+    portion: "1 patata mediana (~130g).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
   },
   {
     id: "c_quinoa",
     name: "Quinoa real cocida",
     emoji: "🌾",
-    category: "carbs",
+    stepGroup: "carb",
     macroType: "carb",
-    tag: "Pseudocereal sin gluten",
-    cleanTip: "Lávala bien antes de cocer en proporción 2:1 con agua o caldo.",
-    portion: "1 puño cerrado cocida (~130g)",
-    isWhole: true
-  },
-  {
-    id: "c_avena",
-    name: "Copos de avena integral",
-    emoji: "🥣",
-    category: "carbs",
-    macroType: "carb",
-    tag: "Betaglucanos reductores",
-    cleanTip: "Cocida en gachas saladas o dulces con canela, sin procesar.",
-    portion: "40-50g en seco",
-    isWhole: true
+    badgeLabel: "Pseudocereal Complejo",
+    cleanTip: "Cocida con caldo vegetal suave en proporción 2:1.",
+    portion: "1 puño cerrado (~130g).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
   },
   {
     id: "c_pan",
     name: "Pan 100% integral masa madre",
     emoji: "🍞",
-    category: "carbs",
+    stepGroup: "carb",
     macroType: "carb",
-    tag: "Grano entero real",
-    cleanTip: "Solo harina integral, agua, masa madre y sal. Sin harinas refinadas.",
-    portion: "1 rebanada gruesa (~50g)",
-    isWhole: true
+    badgeLabel: "Grano Entero",
+    cleanTip: "Harina de grano completo sin refinar, agua, masa madre y sal.",
+    portion: "1 rebanada gruesa (~50g).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
   },
 
   // --- GRASAS SALUDABLES (10%) ---
@@ -328,334 +346,288 @@ const FOOD_DATABASE = [
     id: "f_aove",
     name: "Aceite de Oliva Virgen Extra",
     emoji: "🫒",
-    category: "fats",
+    stepGroup: "fat",
     macroType: "fat",
-    tag: "Oro líquido / Ácido Oleico",
-    cleanTip: "Añádelo siempre en crudo al final sobre verduras o ensalada.",
-    portion: "1 cucharada sopera (~10-15ml)",
-    isWhole: true
+    badgeLabel: "Grasa Saludable",
+    cleanTip: "En crudo sobre la verdura al momento de servir.",
+    portion: "1 cucharada sopera (~10-15ml).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
   },
   {
     id: "f_aguacate",
     name: "Aguacate fresco",
     emoji: "🥑",
-    category: "fats",
+    stepGroup: "fat",
     macroType: "fat",
-    tag: "Grasa monoinsaturada",
-    cleanTip: "En láminas o machacado con unas gotas de lima y sal.",
-    portion: "1/4 a 1/3 de aguacate mediano (~40-50g)",
-    isWhole: true
+    badgeLabel: "Grasa Monoinsaturada",
+    cleanTip: "En láminas frescas con una pizca de sal y zumo de lima.",
+    portion: "1/4 a 1/3 de aguacate mediano (~40g).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
   },
   {
     id: "f_nueces",
     name: "Nueces crudas de California",
     emoji: "🥜",
-    category: "fats",
+    stepGroup: "fat",
     macroType: "fat",
-    tag: "Ácido alfa-linolénico",
-    cleanTip: "Crudas, sin freír ni salar. Añádelas picadas a la verdura.",
-    portion: "4-5 medias nueces (~15-20g)",
-    isWhole: true
+    badgeLabel: "Frutos Secos Crudos",
+    cleanTip: "Crudas, sin freír ni salar. Ácidos grasos esenciales.",
+    portion: "4-5 medias nueces (~15-20g).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
+  },
+  {
+    id: "f_almendras",
+    name: "Almendras crudas",
+    emoji: "🌰",
+    stepGroup: "fat",
+    macroType: "fat",
+    badgeLabel: "Frutos Secos Crudos",
+    cleanTip: "Crudas o ligeramente tostadas en sartén sin aceite añadido.",
+    portion: "10-12 almendras (~15g).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
   },
   {
     id: "f_semillas",
     name: "Semillas de chía y lino",
     emoji: "🌾",
-    category: "fats",
+    stepGroup: "fat",
     macroType: "fat",
-    tag: "Fibra soluble y omega 3",
-    cleanTip: "Muélelas o hidrátalas previamente para absorber sus nutrientes.",
-    portion: "1 cucharadita de postre (~10g)",
-    isWhole: true
+    badgeLabel: "Grasa + Fibra",
+    cleanTip: "Trituradas o hidratadas sobre la verdura para absorber omega 3.",
+    portion: "1 cucharadita de postre (~10g).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
   },
   {
     id: "f_aceitunas",
     name: "Aceitunas naturales aliñadas",
     emoji: "🫒",
-    category: "fats",
+    stepGroup: "fat",
     macroType: "fat",
-    tag: "Fermentado natural",
-    cleanTip: "Con hueso, fermentación tradicional sin conservantes artificiales.",
-    portion: "6-8 aceitunas medianas (~30g)",
-    isWhole: true
-  },
-
-  // --- LEGUMBRES (CARBOHIDRATO + PROTEÍNA VEGETAL) ---
-  {
-    id: "l_lentejas",
-    name: "Lentejas pardinas",
-    emoji: "🫘",
-    category: "legumes",
-    macroType: "legume",
-    tag: "Carbohidrato + Proteína vegetal",
-    cleanTip: "En ensalada fresca con hortalizas o estofadas con verduras sin embutidos.",
-    portion: "1 taza cocidas (~160g)",
-    isWhole: true
-  },
-  {
-    id: "l_garbanzos",
-    name: "Garbanzos tostados o hummus",
-    emoji: "🧆",
-    category: "legumes",
-    macroType: "legume",
-    tag: "Gran poder saciante",
-    cleanTip: "Al horno con especias como snack crujiente o cocidos con espinacas.",
-    portion: "1 taza cocidos (~160g)",
-    isWhole: true
-  },
-  {
-    id: "l_alubias",
-    name: "Alubias blancas o negras",
-    emoji: "🫘",
-    category: "legumes",
-    macroType: "legume",
-    tag: "Fibra prebiótica",
-    cleanTip: "Cocidas con laurel, cebolla y pimiento.",
-    portion: "1 taza cocidas (~160g)",
-    isWhole: true
-  },
-  {
-    id: "l_edamame",
-    name: "Edamame al vapor",
-    emoji: "🫛",
-    category: "legumes",
-    macroType: "legume",
-    tag: "Soja entera en vaina",
-    cleanTip: "Hervido 4 minutos con sal en escamas. Snack o guarnición limpia.",
-    portion: "1 cuenco en vaina (~150g)",
-    isWhole: true
+    badgeLabel: "Fermentado Natural",
+    cleanTip: "Con hueso y aliño tradicional de hierbas, sin conservantes químicos.",
+    portion: "6-8 aceitunas medianas (~30g).",
+    incompatibleWith: [],
+    incompatibilityReason: ""
   }
 ];
 
-// Recetas Predefinidas para Inspiración
+// 2. RECETAS DEL CHEF (IDEAS YA BALANCEADAS)
 const CHEF_PRESETS = [
   {
     title: "Salmón Noruego con Boniato y Brócoli",
-    subtitle: "Proteína grasa: no requiere aceite añadido",
+    subtitle: "Proteína grasa: frutos secos descartados automáticamente",
     icon: "🍣",
-    mode: "fatty-protein",
-    items: {
+    foods: {
+      main: "pg_salmon",
       veggie: "v_brocoli",
-      protein: "pg_salmon",
       carb: "c_boniato",
       fat: null
     }
   },
   {
-    title: "El Clásico Mediterráneo Fit",
-    subtitle: "Pollo al limón con arroz basmati y ensalada verde",
+    title: "Pollo al Limón con Arroz y Rúcula",
+    subtitle: "Proteína magra: requiere AOVE o aguacate para cubrir el 10%",
     icon: "🍗",
-    mode: "standard",
-    items: {
+    foods: {
+      main: "p_pollo",
       veggie: "v_rucula",
-      protein: "p_pollo",
       carb: "c_arroz",
       fat: "f_aove"
     }
   },
   {
-    title: "Brunch Saludable con Huevos Camperos",
-    subtitle: "Huevos enteros pochados + espinacas baby + pan masa madre",
+    title: "Huevos Camperos con Tostada y Espinacas",
+    subtitle: "Huevos con grasa natural: sin frutos secos extra",
     icon: "🍳",
-    mode: "fatty-protein",
-    items: {
+    foods: {
+      main: "pg_huevos",
       veggie: "v_espinacas",
-      protein: "pg_huevos",
       carb: "c_pan",
       fat: null
     }
   },
   {
-    title: "Bowl Vegetal de Garbanzos y Aguacate",
-    subtitle: "Legumbres como proteína e hidrato + pimientos asados",
+    title: "Bowl de Garbanzos, Pimientos y Aguacate",
+    subtitle: "Legumbre base: arroces descartados por duplicidad de hidrato",
     icon: "🧆",
-    mode: "legumes",
-    items: {
+    foods: {
+      main: "l_garbanzos",
       veggie: "v_pimientos",
-      legume: "l_garbanzos",
+      carb: null,
       fat: "f_aguacate"
     }
   },
   {
-    title: "Solomillo de Ternera con Patata y Espárragos",
-    subtitle: "Carne limpia con patata enfriada almidón resistente",
+    title: "Lomo de Ternera con Patata y Espárragos",
+    subtitle: "Carne con grasa propia + patata resistente",
     icon: "🥩",
-    mode: "standard",
-    items: {
+    foods: {
+      main: "pg_ternera",
       veggie: "v_esparragos",
-      protein: "pg_ternera",
       carb: "c_patata",
-      fat: "f_aove"
-    }
-  },
-  {
-    title: "Cena Ligera: Merluza al Papillote y Champiñones",
-    subtitle: "Low-carb: 60% verduras y pescado blanco magro",
-    icon: "🐟",
-    mode: "low-carb",
-    items: {
-      veggie: "v_champinones",
-      protein: "p_merluza",
-      carb: null,
-      fat: "f_aove"
+      fat: null
     }
   }
 ];
 
-// Configuración de los Modos del Plato
-const PLATE_MODES = {
-  "standard": {
-    name: "Estándar Magro",
-    desc: "50% Verduras · 20% Proteína · 20% Hidratos · 10% Grasas",
-    slices: [
-      { id: "veggie", label: "Verduras", percent: 50, color: "#16a34a", icon: "🥦" },
-      { id: "protein", label: "Proteína Magra", percent: 20, color: "#f97316", icon: "🍗" },
-      { id: "carb", label: "Carbohidratos", percent: 20, color: "#eab308", icon: "🍠" },
-      { id: "fat", label: "Grasa Saludable", percent: 10, color: "#0ea5e9", icon: "🥑" }
-    ],
-    coachAdvice: "El equilibrio clásico. Como la proteína es magra (pollo, merluza), añade 1 cucharada de AOVE o aguacate para cubrir el 10% de grasa saludable."
-  },
-  "fatty-protein": {
-    name: "Proteína Grasa",
-    desc: "50% Verduras · 30% Proteína+Grasa · 20% Hidratos",
-    slices: [
-      { id: "veggie", label: "Verduras", percent: 50, color: "#16a34a", icon: "🥦" },
-      { id: "protein_fatty", label: "Proteína + Grasa", percent: 30, color: "#f43f5e", icon: "🐟" },
-      { id: "carb", label: "Carbohidratos", percent: 20, color: "#eab308", icon: "🍠" }
-    ],
-    coachAdvice: "¡Adaptación inteligente! Al elegir salmón, huevos o ternera, la grasa natural ya viene en el alimento. El plato fusiona la cuota de grasa con la proteína (30%). No necesitas aceite extra."
-  },
-  "legumes": {
-    name: "Plato con Legumbres",
-    desc: "50% Verduras · 35% Legumbres (HC+P) · 15% Grasa/Semillas",
-    slices: [
-      { id: "veggie", label: "Verduras", percent: 50, color: "#16a34a", icon: "🥦" },
-      { id: "legume", label: "Legumbres (HC+Proteína)", percent: 35, color: "#8b5cf6", icon: "🫘" },
-      { id: "fat", label: "Grasa / Semillas", percent: 15, color: "#0ea5e9", icon: "🥑" }
-    ],
-    coachAdvice: "Las legumbres (lentejas, garbanzos) son un alimento limpio híbrido: aportan carbohidrato complejo y proteína vegetal en el mismo bocado."
-  },
-  "low-carb": {
-    name: "Cena Ligera / Low Carb",
-    desc: "60% Verduras · 30% Proteína · 10% Grasa",
-    slices: [
-      { id: "veggie", label: "Verduras", percent: 60, color: "#16a34a", icon: "🥦" },
-      { id: "protein", label: "Proteína", percent: 30, color: "#f97316", icon: "🍗" },
-      { id: "fat", label: "Grasa Saludable", percent: 10, color: "#0ea5e9", icon: "🥑" }
-    ],
-    coachAdvice: "Ideal para cenas o días de menor actividad. Se sustituye el almidón por mayor volumen de verdura sin almidón y proteína magra saciante."
-  },
-  "custom": {
-    name: "Modo Personalizado",
-    desc: "El plato se ajusta según los alimentos elegidos",
-    slices: [
-      { id: "veggie", label: "Verduras", percent: 50, color: "#16a34a", icon: "🥦" },
-      { id: "protein", label: "Proteína", percent: 20, color: "#f97316", icon: "🍗" },
-      { id: "carb", label: "Carbohidratos", percent: 20, color: "#eab308", icon: "🍠" },
-      { id: "fat", label: "Grasa", percent: 10, color: "#0ea5e9", icon: "🥑" }
-    ],
-    coachAdvice: "Crea tu propia combinación. Añade o cambia alimentos y observa cómo se equilibra el plato."
-  }
-};
-
-// ESTADO GLOBAL DE LA APLICACIÓN
+// 3. ESTADO GLOBAL DE LA APLICACIÓN
 const AppState = {
-  currentMode: "standard",
+  currentStep: "main", // "main" | "veggie" | "carb" | "fat"
   selectedFoods: {
-    veggie: null,         // id del alimento
-    protein: null,
+    main: null,
+    veggie: null,
     carb: null,
-    fat: null,
-    legume: null
+    fat: null
   },
-  searchQuery: "",
-  activeCategoryFilter: "all",
-  activeZonePicker: null
+  hideIncompatible: true
 };
 
 // ==============================================================================
-// INICIALIZACIÓN DE LA APP
+// INICIALIZACIÓN
 // ==============================================================================
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Cargar plato inicial por defecto
-  loadInitialDefaultPlate();
-
-  // 2. Renderizar catálogo de alimentos
-  renderFoodCatalog();
-
-  // 3. Renderizar recetas del chef en el modal
   renderChefRecipes();
-
-  // 4. Configurar escuchadores de eventos
   setupEventListeners();
-
-  // 5. Dibujar plato SVG inicial
-  updatePlateView();
+  updateFullUI();
 });
 
-function loadInitialDefaultPlate() {
-  AppState.selectedFoods = {
-    veggie: "v_brocoli",
-    protein: "p_pollo",
-    carb: "c_boniato",
-    fat: "f_aove",
-    legume: null
+// ==============================================================================
+// REGLAS Y COMPATIBILIDAD DINÁMICA ("SIN PENSAR")
+// ==============================================================================
+function getCompatibilityRules() {
+  const mainFood = getFoodById(AppState.selectedFoods.main);
+
+  const rules = {
+    isFattyMain: false,
+    isLegumeMain: false,
+    isLeanMain: false,
+    fatSatisfiedByMain: false,
+    carbSatisfiedByMain: false,
+    incompatibleFoodIds: []
   };
+
+  if (!mainFood) {
+    return rules;
+  }
+
+  if (mainFood.macroType === "main_fatty") {
+    rules.isFattyMain = true;
+    rules.fatSatisfiedByMain = true;
+    rules.incompatibleFoodIds = mainFood.incompatibleWith || [];
+  } else if (mainFood.macroType === "main_legume") {
+    rules.isLegumeMain = true;
+    rules.carbSatisfiedByMain = true;
+    rules.incompatibleFoodIds = mainFood.incompatibleWith || [];
+  } else if (mainFood.macroType === "main_lean") {
+    rules.isLeanMain = true;
+  }
+
+  return rules;
 }
 
 // ==============================================================================
-// RENDERIZADO DEL PLATO INTERACTIVO (SVG)
+// ACTUALIZACIÓN COMPLETA DE LA INTERFAZ
 // ==============================================================================
-function updatePlateView() {
-  const modeConfig = PLATE_MODES[AppState.currentMode];
+function updateFullUI() {
+  const rules = getCompatibilityRules();
+
+  // Si la grasa está satisfecha por el principal, limpiamos selección de grasa
+  if (rules.fatSatisfiedByMain && AppState.selectedFoods.fat) {
+    AppState.selectedFoods.fat = null;
+  }
+  // Si el carbohidrato está satisfecho por legumbres, limpiamos selección de carb
+  if (rules.carbSatisfiedByMain && AppState.selectedFoods.carb) {
+    AppState.selectedFoods.carb = null;
+  }
+
+  updatePlateSvg(rules);
+  updateBalanceMeter(rules);
+  updateSmartAlert(rules);
+  updateWizardStepper(rules);
+  renderStepOptions(rules);
+  renderSelectedMacroSlots(rules);
+}
+
+// ==============================================================================
+// DIBUJO DEL PLATO INTERACTIVO SVG
+// ==============================================================================
+function updatePlateSvg(rules) {
   const slicesGroup = document.getElementById("svgSlicesGroup");
   if (!slicesGroup) return;
-
   slicesGroup.innerHTML = "";
 
-  // Determinar los sectores y porcentajes a dibujar
-  let slicesToRender = getSlicesForCurrentState(modeConfig);
+  const mainFood = getFoodById(AppState.selectedFoods.main);
+  const veggieFood = getFoodById(AppState.selectedFoods.veggie);
+  const carbFood = getFoodById(AppState.selectedFoods.carb);
+  const fatFood = getFoodById(AppState.selectedFoods.fat);
 
-  // Dimensiones del plato SVG: centro (200, 200), radio 165
+  let slices = [];
+
+  // SI NO HAY ALIMENTO PRINCIPAL: Diagrama Base Genérico
+  if (!mainFood) {
+    slices = [
+      { id: "veggie", percent: 50, color: "#16a34a", label: "Verduras", icon: "🥦", food: null },
+      { id: "main", percent: 20, color: "#f97316", label: "Proteína", icon: "🥩", food: null },
+      { id: "carb", percent: 20, color: "#eab308", label: "Hidratos", icon: "🍠", food: null },
+      { id: "fat", percent: 10, color: "#0ea5e9", label: "Grasa", icon: "🥑", food: null }
+    ];
+  } else if (rules.isFattyMain) {
+    // VARIACIÓN PROTEÍNA GRASA: 50% Verduras, 30% Proteína+Grasa (Salmón), 20% Carbohidratos
+    slices = [
+      { id: "veggie", percent: 50, color: "#16a34a", label: "Verduras", icon: "🥦", food: veggieFood },
+      { id: "main", percent: 30, color: "#f43f5e", label: "Proteína + Grasa", icon: "🐟", food: mainFood },
+      { id: "carb", percent: 20, color: "#eab308", label: "Hidratos", icon: "🍠", food: carbFood }
+    ];
+  } else if (rules.isLegumeMain) {
+    // VARIACIÓN LEGUMBRES: 50% Verduras, 35% Legumbres (HC+P), 15% Grasa/aliño
+    slices = [
+      { id: "veggie", percent: 50, color: "#16a34a", label: "Verduras", icon: "🥦", food: veggieFood },
+      { id: "main", percent: 35, color: "#8b5cf6", label: "Legumbre (HC+P)", icon: "🫘", food: mainFood },
+      { id: "fat", percent: 15, color: "#0ea5e9", label: "Grasa / Aliño", icon: "🥑", food: fatFood }
+    ];
+  } else {
+    // PROTEÍNA MAGRA: 50% Verduras, 20% Proteína, 20% Hidratos, 10% Grasa
+    slices = [
+      { id: "veggie", percent: 50, color: "#16a34a", label: "Verduras", icon: "🥦", food: veggieFood },
+      { id: "main", percent: 20, color: "#f97316", label: "Proteína", icon: "🍗", food: mainFood },
+      { id: "carb", percent: 20, color: "#eab308", label: "Hidratos", icon: "🍠", food: carbFood },
+      { id: "fat", percent: 10, color: "#0ea5e9", label: "Grasa", icon: "🥑", food: fatFood }
+    ];
+  }
+
+  // Dimensiones del plato SVG: centro (200, 200), radio 168
   const cx = 200;
   const cy = 200;
   const radius = 168;
 
-  // En la infografía original de referencia (reglaDieta.jpg):
-  // La mitad derecha (50%) es para Verduras.
-  // La parte izquierda está dividida entre Carbohidratos (arriba-izq) y Proteínas (abajo-izq).
-  // Por tanto, comenzaremos el arco en -90° (arriba / 12 horas):
-  // De -90° a +90° en sentido horario es la mitad derecha completa (180° = 50% Verduras).
+  // Empezar en -90° (12 horas). De -90° a +90° = 180° = 50% Verduras a la derecha
   let currentAngle = -90;
 
-  slicesToRender.forEach((slice) => {
+  slices.forEach((slice) => {
     const sweepAngle = (slice.percent / 100) * 360;
     const startAngle = currentAngle;
     const endAngle = currentAngle + sweepAngle;
     currentAngle += sweepAngle;
 
-    // Calcular coordenadas del arco SVG
     const pathD = describeSvgArc(cx, cy, radius, startAngle, endAngle);
 
-    // Calcular punto medio para texto / icono
+    // Centroide de texto e iconos
     const midAngle = startAngle + sweepAngle / 2;
     const textRadius = radius * 0.58;
     const rad = (midAngle * Math.PI) / 180;
     const tx = cx + textRadius * Math.cos(rad);
     const ty = cy + textRadius * Math.sin(rad);
 
-    // Alimento asignado en esta zona
-    const assignedFood = getAssignedFoodForSlice(slice.id);
-
-    // Crear grupo del sector
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
     g.setAttribute("class", "plate-slice");
     g.setAttribute("data-zone-id", slice.id);
-    g.setAttribute("tabindex", "0");
     g.setAttribute("role", "button");
-    g.setAttribute("aria-label", `Zona ${slice.label} (${slice.percent}%)`);
 
-    // Path del sector
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute("d", pathD);
     path.setAttribute("fill", slice.color);
@@ -664,11 +636,10 @@ function updatePlateView() {
     path.setAttribute("stroke-width", "3");
     g.appendChild(path);
 
-    // Contenedor decorativo de etiqueta (Pastilla flotante translúcida)
+    // Pastilla translúcida central
     const badgeW = sweepAngle < 45 ? 65 : 84;
     const badgeH = 50;
-    
-    // Rectángulo de fondo para que el texto sea siempre legible
+
     const badgeRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     badgeRect.setAttribute("x", tx - badgeW / 2);
     badgeRect.setAttribute("y", ty - badgeH / 2);
@@ -678,12 +649,12 @@ function updatePlateView() {
     badgeRect.setAttribute("rx", "12");
     g.appendChild(badgeRect);
 
-    // Emoji del alimento elegido o icono del macro
+    // Icono emoji
     const textEmoji = document.createElementNS("http://www.w3.org/2000/svg", "text");
     textEmoji.setAttribute("x", tx);
     textEmoji.setAttribute("y", ty - 8);
     textEmoji.setAttribute("class", "slice-icon-emoji");
-    textEmoji.textContent = assignedFood ? assignedFood.emoji : slice.icon;
+    textEmoji.textContent = slice.food ? slice.food.emoji : slice.icon;
     g.appendChild(textEmoji);
 
     // Texto de porcentaje
@@ -695,40 +666,25 @@ function updatePlateView() {
     textPercent.textContent = `${slice.percent}%`;
     g.appendChild(textPercent);
 
-    // Evento de clic en el plato: abrir selector para esa zona
+    // Clic en la zona del plato: activa ese paso en el wizard
     g.addEventListener("click", () => {
-      openZoneFoodPicker(slice.id, slice.label, slice.percent);
+      setWizardStep(slice.id);
     });
 
     slicesGroup.appendChild(g);
   });
-
-  // Actualizar medidor de progreso múltiple
-  updateMultiProgressBar(slicesToRender);
-
-  // Actualizar tarjetas de ingredientes seleccionados
-  renderSelectedMacroSlots();
-
-  // Actualizar texto del coach
-  updateCoachInsight(modeConfig);
 }
 
-// Convertir ángulos en coordenadas SVG Arc
 function describeSvgArc(cx, cy, r, startAngle, endAngle) {
-  // Evitar error en 360 grados exactos
   if (endAngle - startAngle >= 359.9) {
     endAngle = startAngle + 359.9;
   }
-
   const startRad = (startAngle * Math.PI) / 180;
   const endRad = (endAngle * Math.PI) / 180;
-
   const x1 = cx + r * Math.cos(startRad);
   const y1 = cy + r * Math.sin(startRad);
-
   const x2 = cx + r * Math.cos(endRad);
   const y2 = cy + r * Math.sin(endRad);
-
   const largeArcFlag = endAngle - startAngle <= 180 ? 0 : 1;
 
   return [
@@ -739,158 +695,428 @@ function describeSvgArc(cx, cy, r, startAngle, endAngle) {
   ].join(" ");
 }
 
-function getSlicesForCurrentState(modeConfig) {
-  // En modo fatty-protein, verificamos si hay proteína grasa seleccionada
-  return modeConfig.slices;
-}
-
-function getAssignedFoodForSlice(sliceId) {
-  if (sliceId === "veggie") return getFoodById(AppState.selectedFoods.veggie);
-  if (sliceId === "protein" || sliceId === "protein_fatty") {
-    return getFoodById(AppState.selectedFoods.protein);
-  }
-  if (sliceId === "carb") return getFoodById(AppState.selectedFoods.carb);
-  if (sliceId === "fat") return getFoodById(AppState.selectedFoods.fat);
-  if (sliceId === "legume") return getFoodById(AppState.selectedFoods.legume);
-  return null;
-}
-
-// Barra multicolor inferior
-function updateMultiProgressBar(slices) {
+// ==============================================================================
+// BARRA DE BALANCE DE MACROS
+// ==============================================================================
+function updateBalanceMeter(rules) {
   const bar = document.getElementById("multiProgressBar");
-  if (!bar) return;
+  const percentLabel = document.getElementById("plateBalancePercent");
+  const statusBadge = document.getElementById("plateStatusBadge");
+  if (!bar || !percentLabel || !statusBadge) return;
+
   bar.innerHTML = "";
 
-  slices.forEach((s) => {
-    const seg = document.createElement("div");
-    seg.className = "progress-seg";
-    seg.style.width = `${s.percent}%`;
-    seg.style.backgroundColor = s.color;
-    seg.title = `${s.label}: ${s.percent}%`;
-    bar.appendChild(seg);
+  const mainFood = getFoodById(AppState.selectedFoods.main);
+  const veggieFood = getFoodById(AppState.selectedFoods.veggie);
+  const carbFood = getFoodById(AppState.selectedFoods.carb);
+  const fatFood = getFoodById(AppState.selectedFoods.fat);
+
+  let currentPercent = 0;
+  const segments = [];
+
+  // Calcular porcentaje completado según modo
+  if (veggieFood) {
+    currentPercent += 50;
+    segments.push({ percent: 50, color: "#16a34a" });
+  }
+
+  if (mainFood) {
+    if (rules.isFattyMain) {
+      currentPercent += 30; // Cubre 20% prote + 10% grasa
+      segments.push({ percent: 30, color: "#f43f5e" });
+    } else if (rules.isLegumeMain) {
+      currentPercent += 35; // Cubre hidrato + proteina
+      segments.push({ percent: 35, color: "#8b5cf6" });
+    } else {
+      currentPercent += 20;
+      segments.push({ percent: 20, color: "#f97316" });
+    }
+  }
+
+  if (carbFood && !rules.carbSatisfiedByMain) {
+    currentPercent += 20;
+    segments.push({ percent: 20, color: "#eab308" });
+  }
+
+  if (fatFood && !rules.fatSatisfiedByMain) {
+    const p = rules.isLegumeMain ? 15 : 10;
+    currentPercent += p;
+    segments.push({ percent: p, color: "#0ea5e9" });
+  }
+
+  // Renderizar segmentos coloreados en la barra
+  segments.forEach((seg) => {
+    const el = document.createElement("div");
+    el.className = "progress-seg";
+    el.style.width = `${seg.percent}%`;
+    el.style.backgroundColor = seg.color;
+    bar.appendChild(el);
   });
 
-  const statusSummary = document.getElementById("plateStatusSummary");
-  if (statusSummary) {
-    const total = slices.reduce((acc, curr) => acc + curr.percent, 0);
-    statusSummary.textContent = `${total}% Equilibrado`;
+  percentLabel.textContent = `${Math.min(currentPercent, 100)}% Completo`;
+
+  if (!mainFood) {
+    statusBadge.textContent = "⚪ Diagrama Base (Elige plato fuerte)";
+  } else if (currentPercent >= 100) {
+    statusBadge.textContent = "✨ 100% Plato Equilibrado y Limpio";
+  } else {
+    statusBadge.textContent = `⏳ En progreso (${currentPercent}%)`;
   }
 }
 
 // ==============================================================================
-// ASESOR NUTRICIONAL (COACH INSIGHTS)
+// MENSAJE DE ASESOR INTELIGENTE EN TIEMPO REAL
 // ==============================================================================
-function updateCoachInsight(modeConfig) {
-  const titleEl = document.getElementById("coachInsightTitle");
-  const textEl = document.getElementById("coachInsightText");
-  if (!titleEl || !textEl) return;
+function updateSmartAlert(rules) {
+  const alertBox = document.getElementById("smartRuleAlert");
+  const alertIcon = document.getElementById("ruleAlertIcon");
+  const alertTitle = document.getElementById("ruleAlertTitle");
+  const alertText = document.getElementById("ruleAlertText");
+  if (!alertBox || !alertTitle || !alertText) return;
 
-  const chosenProtein = getFoodById(AppState.selectedFoods.protein);
-  const chosenFat = getFoodById(AppState.selectedFoods.fat);
+  const mainFood = getFoodById(AppState.selectedFoods.main);
 
-  // Regla especial del usuario: Si elige proteína grasa y también aceite extra
-  if (chosenProtein && chosenProtein.macroType === "protein_fatty" && chosenFat) {
-    titleEl.textContent = `💡 Ajuste de grasa con ${chosenProtein.name}`;
-    textEl.textContent = `Como has elegido ${chosenProtein.name}, ya incorpora su propia grasa saludable. No necesitas añadir ${chosenFat.name} abundante. ¡Puedes guardarlo para otra comida o usar solo unas gotas!`;
+  if (!mainFood) {
+    alertBox.className = "smart-rule-alert alert-info";
+    alertIcon.textContent = "💡";
+    alertTitle.textContent = "Paso 1: Elige tu Alimento Principal";
+    alertText.textContent = "Comienza con la base de tu plato. Si eliges salmón, huevos o ternera, descartaremos automáticamente frutos secos y grasas añadidas.";
     return;
   }
 
-  // Si eligió proteína grasa en modo estándar, sugerir la adaptación
-  if (chosenProtein && chosenProtein.macroType === "protein_fatty" && AppState.currentMode === "standard") {
-    titleEl.textContent = `🐟 Adaptación de Proteína Grasa`;
-    textEl.textContent = `Has añadido ${chosenProtein.name}. En este plato, la proteína y la grasa se combinan naturalmente ocupando el 30% del plato sin requerir grasa extra.`;
-    return;
+  if (rules.isFattyMain) {
+    alertBox.className = "smart-rule-alert alert-warning";
+    alertIcon.textContent = "🐟";
+    alertTitle.textContent = `Grasas cubiertas por ${mainFood.name}`;
+    alertText.textContent = `Al elegir ${mainFood.name} (proteína + grasa), tu plato no necesita frutos secos ni aceites abundantes. ¡Se han descartado automáticamente para no pensar!`;
+  } else if (rules.isLegumeMain) {
+    alertBox.className = "smart-rule-alert alert-warning";
+    alertIcon.textContent = "🫘";
+    alertTitle.textContent = `Carbohidratos cubiertos por ${mainFood.name}`;
+    alertText.textContent = `Las legumbres ya aportan carbohidratos complejos y proteína vegetal. Hemos eliminado arroces y patatas para evitar duplicar hidratos.`;
+  } else {
+    alertBox.className = "smart-rule-alert";
+    alertIcon.textContent = "🍗";
+    alertTitle.textContent = `Proteína magra: ${mainFood.name}`;
+    alertText.textContent = `Tu proteína no tiene grasa natural. Se habilitan los frutos secos, aguacate y AOVE para completar tu cuota del 10% de lípidos saludables.`;
   }
-
-  // Texto por defecto del modo
-  titleEl.textContent = `Variación: ${modeConfig.name}`;
-  textEl.textContent = modeConfig.coachAdvice;
 }
 
 // ==============================================================================
-// SLOTS DEL PLATO ACTUAL (TARJETAS DE INGREDIENTES)
+// NAVEGADOR DE PASOS (STEPPER)
 // ==============================================================================
-function renderSelectedMacroSlots() {
+function updateWizardStepper(rules) {
+  const stepMain = document.getElementById("stepChipMain");
+  const stepVeggie = document.getElementById("stepChipVeggie");
+  const stepCarb = document.getElementById("stepChipCarb");
+  const stepFat = document.getElementById("stepChipFat");
+
+  const chips = [stepMain, stepVeggie, stepCarb, stepFat];
+  chips.forEach(c => c && c.classList.remove("active", "completed", "locked"));
+
+  // Paso 1: Principal
+  if (AppState.selectedFoods.main) {
+    stepMain.classList.add("completed");
+  }
+
+  // Paso 2: Verduras
+  if (AppState.selectedFoods.veggie) {
+    stepVeggie.classList.add("completed");
+  }
+
+  // Paso 3: Carbohidratos
+  if (rules.carbSatisfiedByMain) {
+    stepCarb.classList.add("locked");
+    stepCarb.querySelector(".step-name").textContent = "🍠 Hidrato 🔒";
+  } else {
+    stepCarb.querySelector(".step-name").textContent = "🍠 Hidratos";
+    if (AppState.selectedFoods.carb) stepCarb.classList.add("completed");
+  }
+
+  // Paso 4: Grasas
+  if (rules.fatSatisfiedByMain) {
+    stepFat.classList.add("locked");
+    stepFat.querySelector(".step-name").textContent = "🥑 Grasa 🔒";
+  } else {
+    stepFat.querySelector(".step-name").textContent = "🥑 Grasa";
+    if (AppState.selectedFoods.fat) stepFat.classList.add("completed");
+  }
+
+  // Marcar activo
+  const activeChip = document.getElementById(`stepChip${capitalize(AppState.currentStep)}`);
+  if (activeChip) activeChip.classList.add("active");
+
+  // Actualizar textos de cabecera del paso
+  const titleEl = document.getElementById("currentStepTitle");
+  const descEl = document.getElementById("currentStepDesc");
+
+  if (AppState.currentStep === "main") {
+    titleEl.textContent = "Paso 1: Elige tu Alimento Principal";
+    descEl.textContent = "Selecciona el plato fuerte. Esto determinará automáticamente qué otras opciones son compatibles.";
+  } else if (AppState.currentStep === "veggie") {
+    titleEl.textContent = "Paso 2: Añade tus Verduras (50% del plato)";
+    descEl.textContent = "Base vegetal rica en fibra, agua y micronutrientes sin almidón. Te sacian y modulan la absorción.";
+  } else if (AppState.currentStep === "carb") {
+    if (rules.carbSatisfiedByMain) {
+      titleEl.textContent = "Paso 3: Carbohidratos (Cubiertos por la legumbre)";
+      descEl.textContent = "Tus legumbres ya aportan los carbohidratos necesarios. No se requieren arroces ni féculas.";
+    } else {
+      titleEl.textContent = "Paso 3: Elige tu Carbohidrato Complejo (20%)";
+      descEl.textContent = "Granos enteros o tubérculos de absorción lenta para energía sostenida.";
+    }
+  } else if (AppState.currentStep === "fat") {
+    if (rules.fatSatisfiedByMain) {
+      titleEl.textContent = "Paso 4: Grasas Saludables (Cubiertas por la proteína)";
+      descEl.textContent = "Tu proteína ya aporta los lípidos saludables. Frutos secos y aceites densos descartados.";
+    } else {
+      titleEl.textContent = "Paso 4: Elige tu Grasa Saludable (10%)";
+      descEl.textContent = "Añade frutos secos, aguacate o AOVE en crudo para completar tu nutrición.";
+    }
+  }
+}
+
+function setWizardStep(stepKey) {
+  // Mapear nombres si vienen del plato SVG
+  let target = stepKey;
+  if (stepKey === "protein") target = "main";
+  AppState.currentStep = target;
+  updateFullUI();
+}
+
+// ==============================================================================
+// RENDERIZADO DE OPCIONES DEL PASO ACTIVO (CON FILTRADO INTELIGENTE)
+// ==============================================================================
+function renderStepOptions(rules) {
+  const grid = document.getElementById("stepOptionsGrid");
+  if (!grid) return;
+  grid.innerHTML = "";
+
+  const step = AppState.currentStep;
+
+  // Si el paso actual está satisfecho por reglas (ej. Grasa bloqueada por Salmón)
+  if (step === "fat" && rules.fatSatisfiedByMain) {
+    const mainFood = getFoodById(AppState.selectedFoods.main);
+    grid.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 24px 16px; background: #fffbeb; border: 1.5px dashed #fcd34d; border-radius: 14px;">
+        <span style="font-size: 2.2rem; display:block; margin-bottom: 6px;">🔒</span>
+        <strong style="color: #92400e; font-size: 0.95rem; display:block; margin-bottom: 4px;">
+          Grasas cubiertas por ${mainFood ? mainFood.name : 'tu proteína'}
+        </strong>
+        <p style="color: #78350f; font-size: 0.8rem; line-height: 1.4; max-width: 440px; margin: 0 auto;">
+          Los frutos secos (nueces, almendras) y aguacate completo han sido eliminados de la selección para que tu plato no se pase de calorías.
+        </p>
+        <button class="btn-primary" style="margin: 14px auto 0; display: inline-flex; width: auto;" onclick="setWizardStep('veggie')">
+          ← Volver a Verduras
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  if (step === "carb" && rules.carbSatisfiedByMain) {
+    const mainFood = getFoodById(AppState.selectedFoods.main);
+    grid.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 24px 16px; background: #fffbeb; border: 1.5px dashed #fcd34d; border-radius: 14px;">
+        <span style="font-size: 2.2rem; display:block; margin-bottom: 6px;">🔒</span>
+        <strong style="color: #92400e; font-size: 0.95rem; display:block; margin-bottom: 4px;">
+          Carbohidratos cubiertos por ${mainFood ? mainFood.name : 'tus legumbres'}
+        </strong>
+        <p style="color: #78350f; font-size: 0.8rem; line-height: 1.4; max-width: 440px; margin: 0 auto;">
+          Arroces y patatas han sido descartados para evitar una carga glucémica doble.
+        </p>
+        <button class="btn-primary" style="margin: 14px auto 0; display: inline-flex; width: auto;" onclick="setWizardStep('fat')">
+          Ir a Grasa / Aliño →
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  // Filtrar alimentos del catálogo para este paso
+  const foodsInGroup = FOOD_DATABASE.filter(f => f.stepGroup === step);
+
+  foodsInGroup.forEach((food) => {
+    const isIncompatible = rules.incompatibleFoodIds.includes(food.id);
+
+    // Si el usuario tiene activo "Filtrar incompatibles" y este alimento es incompatible, lo omitimos
+    if (AppState.hideIncompatible && isIncompatible) {
+      return;
+    }
+
+    const isSelected = Object.values(AppState.selectedFoods).includes(food.id);
+
+    const card = document.createElement("div");
+    card.className = `step-food-card ${isSelected ? 'selected' : ''} ${isIncompatible ? 'incompatible' : ''}`;
+
+    let badgeClass = "badge-macro-lean";
+    if (food.macroType === "main_fatty") badgeClass = "badge-macro-fatty";
+    else if (food.macroType === "main_legume") badgeClass = "badge-macro-legume";
+    else if (food.macroType === "veggie") badgeClass = "badge-macro-veggie";
+    else if (food.macroType === "carb") badgeClass = "badge-macro-carb";
+    else if (food.macroType === "fat") badgeClass = "badge-macro-fat";
+
+    card.innerHTML = `
+      <div class="food-card-top-row">
+        <div class="food-card-left">
+          <span class="food-card-emoji">${food.emoji}</span>
+          <div class="food-card-name-group">
+            <h4>${food.name}</h4>
+            <span class="food-card-badge ${badgeClass}">${food.badgeLabel}</span>
+          </div>
+        </div>
+        ${isIncompatible ? `<span class="food-incompatible-tag">⛔ Incompatible</span>` : ''}
+      </div>
+
+      <div class="food-card-clean-tip">
+        ${isIncompatible 
+          ? `<strong>⛔ Por qué se descarta:</strong> ${food.incompatibilityReason || 'No cuadra con la proteína elegida.'}`
+          : `<strong>💡 Preparación limpia:</strong> ${food.cleanTip}`
+        }
+      </div>
+
+      <div class="food-card-footer">
+        <span class="food-portion-text">📏 ${food.portion}</span>
+        <button class="btn-choose-item ${isSelected ? 'btn-is-chosen' : ''}">
+          ${isSelected ? '✓ En el plato' : (isIncompatible ? 'Descartado' : '+ Elegir')}
+        </button>
+      </div>
+    `;
+
+    if (!isIncompatible) {
+      card.addEventListener("click", () => {
+        handleSelectFood(food);
+      });
+    }
+
+    grid.appendChild(card);
+  });
+}
+
+// ==============================================================================
+// ACCIÓN: SELECCIONAR ALIMENTO Y AVANZAR ("SIN PENSAR")
+// ==============================================================================
+function handleSelectFood(food) {
+  const currentStep = AppState.currentStep;
+
+  if (currentStep === "main") {
+    AppState.selectedFoods.main = food.id;
+
+    // Regla de descarte inteligente:
+    if (food.macroType === "main_fatty") {
+      AppState.selectedFoods.fat = null; // Grasa cubierta
+      showToast(`🐟 ${food.name} elegido. Frutos secos y grasas descartados automáticamente.`);
+      AppState.currentStep = "veggie"; // Siguiente paso automático
+    } else if (food.macroType === "main_legume") {
+      AppState.selectedFoods.carb = null; // Carbohidrato cubierto
+      showToast(`🫘 ${food.name} elegido. Arroces y patatas descartados.`);
+      AppState.currentStep = "veggie";
+    } else {
+      showToast(`🍗 ${food.name} elegido. Habilitada grasa saludable.`);
+      AppState.currentStep = "veggie";
+    }
+  } else if (currentStep === "veggie") {
+    AppState.selectedFoods.veggie = food.id;
+    showToast(`🥦 ${food.name} añadido (50% del plato).`);
+
+    const rules = getCompatibilityRules();
+    if (rules.carbSatisfiedByMain) {
+      AppState.currentStep = "fat";
+    } else {
+      AppState.currentStep = "carb";
+    }
+  } else if (currentStep === "carb") {
+    AppState.selectedFoods.carb = food.id;
+    showToast(`🍠 ${food.name} añadido a los carbohidratos.`);
+
+    const rules = getCompatibilityRules();
+    if (rules.fatSatisfiedByMain) {
+      // Plato ya completo
+      showToast("🎉 ¡Plato equilibrado completo!");
+    } else {
+      AppState.currentStep = "fat";
+    }
+  } else if (currentStep === "fat") {
+    AppState.selectedFoods.fat = food.id;
+    showToast(`🥑 ${food.name} añadido a las grasas.`);
+  }
+
+  updateFullUI();
+}
+
+// ==============================================================================
+// RANURAS DE RESUMEN DEL PLATO
+// ==============================================================================
+function renderSelectedMacroSlots(rules) {
   const container = document.getElementById("macroSlotsGrid");
   if (!container) return;
   container.innerHTML = "";
 
-  const mode = AppState.currentMode;
-  const isFattyMode = mode === "fatty-protein";
-  const isLegumeMode = mode === "legumes";
+  const mainFood = getFoodById(AppState.selectedFoods.main);
+  const veggieFood = getFoodById(AppState.selectedFoods.veggie);
+  const carbFood = getFoodById(AppState.selectedFoods.carb);
+  const fatFood = getFoodById(AppState.selectedFoods.fat);
 
   const slots = [
+    // 1. Principal
+    {
+      key: "main",
+      label: rules.isFattyMain ? "30% Proteína + Grasa" : (rules.isLegumeMain ? "35% Legumbre (HC+P)" : "20% Proteína Magra"),
+      color: rules.isFattyMain ? "#f43f5e" : (rules.isLegumeMain ? "#8b5cf6" : "#f97316"),
+      food: mainFood,
+      isLocked: false
+    },
+    // 2. Verduras
     {
       key: "veggie",
       label: "50% Verduras",
       color: "#16a34a",
-      foodId: AppState.selectedFoods.veggie,
-      categoryFilter: "veggies"
+      food: veggieFood,
+      isLocked: false
+    },
+    // 3. Carbohidratos
+    {
+      key: "carb",
+      label: rules.carbSatisfiedByMain ? "Hidratos (Cubiertos 🔒)" : "20% Carbohidratos",
+      color: "#eab308",
+      food: rules.carbSatisfiedByMain ? { emoji: "🫘", name: `Cubierto por ${mainFood.name}`, portion: "Aporte natural" } : carbFood,
+      isLocked: rules.carbSatisfiedByMain
+    },
+    // 4. Grasas
+    {
+      key: "fat",
+      label: rules.fatSatisfiedByMain ? "Grasa (Cubierta 🔒)" : (rules.isLegumeMain ? "15% Grasa / Aliño" : "10% Grasa Saludable"),
+      color: "#0ea5e9",
+      food: rules.fatSatisfiedByMain ? { emoji: "🐟", name: `Cubierta por ${mainFood.name}`, portion: "Frutos secos no necesarios" } : fatFood,
+      isLocked: rules.fatSatisfiedByMain
     }
   ];
 
-  if (isLegumeMode) {
-    slots.push({
-      key: "legume",
-      label: "35% Legumbres (HC+P)",
-      color: "#8b5cf6",
-      foodId: AppState.selectedFoods.legume,
-      categoryFilter: "legumes"
-    });
-  } else {
-    slots.push({
-      key: "protein",
-      label: isFattyMode ? "30% Proteína + Grasa" : "20% Proteína Magra",
-      color: isFattyMode ? "#f43f5e" : "#f97316",
-      foodId: AppState.selectedFoods.protein,
-      categoryFilter: isFattyMode ? "fatty-protein" : "lean-protein"
-    });
-
-    if (mode !== "low-carb") {
-      slots.push({
-        key: "carb",
-        label: "20% Carbohidratos",
-        color: "#eab308",
-        foodId: AppState.selectedFoods.carb,
-        categoryFilter: "carbs"
-      });
-    }
-  }
-
-  // Grasa (si no es fatty-protein)
-  if (!isFattyMode) {
-    slots.push({
-      key: "fat",
-      label: isLegumeMode ? "15% Grasa / Semillas" : "10% Grasa Saludable",
-      color: "#0ea5e9",
-      foodId: AppState.selectedFoods.fat,
-      categoryFilter: "fats"
-    });
-  }
-
   slots.forEach((slot) => {
-    const food = getFoodById(slot.foodId);
     const card = document.createElement("div");
-    card.className = "slot-card";
+    card.className = `slot-card ${slot.isLocked ? 'locked-by-rule' : ''}`;
     card.style.setProperty("--slot-color", slot.color);
 
-    if (food) {
+    if (slot.food) {
       card.innerHTML = `
         <div class="slot-info">
-          <span class="slot-emoji">${food.emoji}</span>
+          <span class="slot-emoji">${slot.food.emoji}</span>
           <div class="slot-details">
             <span class="slot-macro-name">${slot.label}</span>
-            <span class="slot-food-name">${food.name}</span>
-            <span class="slot-portion">${food.portion}</span>
+            <span class="slot-food-name">${slot.food.name}</span>
+            <span class="slot-portion">${slot.food.portion}</span>
           </div>
         </div>
         <div class="slot-actions">
-          <button class="slot-btn" onclick="openZoneFoodPicker('${slot.key}', '${slot.label}')" title="Cambiar alimento">
-            Cambiar
-          </button>
-          <button class="slot-btn" onclick="removeSlotFood('${slot.key}')" title="Quitar">
-            ✕
-          </button>
+          ${!slot.isLocked ? `
+            <button class="slot-btn" onclick="setWizardStep('${slot.key}')" title="Cambiar alimento">
+              Cambiar
+            </button>
+            <button class="slot-btn" onclick="clearSlotFood('${slot.key}')" title="Quitar">
+              ✕
+            </button>
+          ` : `
+            <span style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">Automático</span>
+          `}
         </div>
       `;
     } else {
@@ -903,7 +1129,7 @@ function renderSelectedMacroSlots() {
           </div>
         </div>
         <div class="slot-actions">
-          <button class="slot-btn slot-btn-choose" onclick="openZoneFoodPicker('${slot.key}', '${slot.label}')">
+          <button class="slot-btn" style="background:#ecfdf5; color:#065f46;" onclick="setWizardStep('${slot.key}')">
             Elegir
           </button>
         </div>
@@ -914,202 +1140,14 @@ function renderSelectedMacroSlots() {
   });
 }
 
-function removeSlotFood(slotKey) {
-  AppState.selectedFoods[slotKey] = null;
-  updatePlateView();
-  renderFoodCatalog();
-  showToast("Alimento quitado del plato");
+function clearSlotFood(key) {
+  AppState.selectedFoods[key] = null;
+  updateFullUI();
+  showToast("Elemento retirado");
 }
 
 // ==============================================================================
-// CATÁLOGO DE ALIMENTOS
-// ==============================================================================
-function renderFoodCatalog() {
-  const grid = document.getElementById("foodCatalogGrid");
-  if (!grid) return;
-  grid.innerHTML = "";
-
-  const query = AppState.searchQuery.toLowerCase().trim();
-  const catFilter = AppState.activeCategoryFilter;
-
-  const filtered = FOOD_DATABASE.filter((item) => {
-    const matchCategory = catFilter === "all" || item.category === catFilter;
-    const matchSearch =
-      query === "" ||
-      item.name.toLowerCase().includes(query) ||
-      item.cleanTip.toLowerCase().includes(query) ||
-      item.tag.toLowerCase().includes(query);
-    return matchCategory && matchSearch;
-  });
-
-  if (filtered.length === 0) {
-    grid.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 24px; color: #94a3b8;">
-        <p style="font-size: 2rem; margin-bottom: 6px;">🔍</p>
-        <p>No se encontraron alimentos con ese filtro.</p>
-      </div>
-    `;
-    return;
-  }
-
-  filtered.forEach((item) => {
-    const card = document.createElement("div");
-    card.className = "food-card";
-
-    const isSelected = Object.values(AppState.selectedFoods).includes(item.id);
-    const tagClass = getTagClass(item.category);
-
-    card.innerHTML = `
-      <div class="food-card-header">
-        <div class="food-card-left">
-          <span class="food-emoji-large">${item.emoji}</span>
-          <div class="food-title-group">
-            <h4>${item.name}</h4>
-            <span class="food-type-tag ${tagClass}">${getCategoryDisplayName(item.category)}</span>
-          </div>
-        </div>
-      </div>
-      <div class="food-card-tip">
-        <strong>💡 Preparación limpia:</strong> ${item.cleanTip}
-      </div>
-      <div class="food-card-footer">
-        <span class="food-portion-hint">📏 ${item.portion}</span>
-        <button class="btn-add-food ${isSelected ? 'is-selected' : ''}" onclick="selectFoodFromCatalog('${item.id}')">
-          ${isSelected ? '✓ En el plato' : '+ Añadir'}
-        </button>
-      </div>
-    `;
-
-    grid.appendChild(card);
-  });
-}
-
-function getTagClass(cat) {
-  switch (cat) {
-    case "veggies": return "tag-veggie";
-    case "lean-protein": return "tag-lean";
-    case "fatty-protein": return "tag-fatty";
-    case "carbs": return "tag-carb";
-    case "fats": return "tag-fat";
-    case "legumes": return "tag-legume";
-    default: return "";
-  }
-}
-
-function getCategoryDisplayName(cat) {
-  switch (cat) {
-    case "veggies": return "Verdura (50%)";
-    case "lean-protein": return "Proteína Magra";
-    case "fatty-protein": return "Proteína + Grasa";
-    case "carbs": return "Hidrato Complejo";
-    case "fats": return "Grasa Saludable";
-    case "legumes": return "Legumbre";
-    default: return cat;
-  }
-}
-
-// Añadir un alimento desde el catálogo general
-function selectFoodFromCatalog(foodId) {
-  const food = getFoodById(foodId);
-  if (!food) return;
-
-  // Lógica inteligente de adaptación:
-  // Si selecciona una proteína con grasa (ej: Salmón, huevo entero):
-  if (food.macroType === "protein_fatty") {
-    AppState.selectedFoods.protein = food.id;
-    // Adaptar automáticamente el modo a fatty-protein si está en estándar
-    if (AppState.currentMode === "standard") {
-      setMode("fatty-protein", false);
-      showToast(`🐟 ${food.name} contiene su propia grasa. Modo adaptado a Proteína Grasa.`);
-    } else {
-      showToast(`Añadido ${food.name} al plato`);
-    }
-  } else if (food.macroType === "protein_lean") {
-    AppState.selectedFoods.protein = food.id;
-    if (AppState.currentMode === "fatty-protein") {
-      setMode("standard", false);
-    }
-    showToast(`Añadido ${food.name} como proteína magra`);
-  } else if (food.macroType === "veggie") {
-    AppState.selectedFoods.veggie = food.id;
-    showToast(`Añadido ${food.name} (50% verduras)`);
-  } else if (food.macroType === "carb") {
-    AppState.selectedFoods.carb = food.id;
-    showToast(`Añadido ${food.name} a los carbohidratos`);
-  } else if (food.macroType === "fat") {
-    AppState.selectedFoods.fat = food.id;
-    showToast(`Añadido ${food.name} a las grasas saludables`);
-  } else if (food.macroType === "legume") {
-    AppState.selectedFoods.legume = food.id;
-    if (AppState.currentMode !== "legumes") {
-      setMode("legumes", false);
-    }
-    showToast(`Añadido ${food.name} (modo Legumbres adaptado)`);
-  }
-
-  updatePlateView();
-  renderFoodCatalog();
-}
-
-// ==============================================================================
-// MODAL / DRAWER DE SELECCIÓN POR ZONA (AL TOCAR EL PLATO)
-// ==============================================================================
-function openZoneFoodPicker(zoneKey, zoneLabel, percent) {
-  const modal = document.getElementById("modalZonePicker");
-  const title = document.getElementById("zonePickerTitle");
-  const subtitle = document.getElementById("zonePickerSubtitle");
-  const grid = document.getElementById("zoneFoodsGrid");
-  if (!modal || !grid) return;
-
-  AppState.activeZonePicker = zoneKey;
-
-  title.textContent = `Elegir para ${zoneLabel}`;
-  subtitle.textContent = `Prioriza comida limpia y no procesada`;
-
-  // Mapear qué categoría de alimentos mostrar para esta zona
-  let targetCategories = [];
-  if (zoneKey === "veggie") targetCategories = ["veggies"];
-  else if (zoneKey === "protein") targetCategories = ["lean-protein", "fatty-protein"];
-  else if (zoneKey === "protein_fatty") targetCategories = ["fatty-protein"];
-  else if (zoneKey === "carb") targetCategories = ["carbs"];
-  else if (zoneKey === "fat") targetCategories = ["fats"];
-  else if (zoneKey === "legume") targetCategories = ["legumes"];
-
-  const foodsForZone = FOOD_DATABASE.filter((f) => targetCategories.includes(f.category));
-
-  grid.innerHTML = "";
-  foodsForZone.forEach((food) => {
-    const card = document.createElement("div");
-    card.className = "zone-pick-card";
-    card.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span style="font-size: 1.6rem;">${food.emoji}</span>
-        <div>
-          <strong style="display:block; font-size: 0.88rem; color: #0f172a;">${food.name}</strong>
-          <small style="color: #64748b; font-size: 0.72rem;">${food.tag}</small>
-        </div>
-      </div>
-      <button class="btn-add-food" style="margin-left: 8px;">Elegir</button>
-    `;
-
-    card.addEventListener("click", () => {
-      selectFoodFromCatalog(food.id);
-      closeZonePicker();
-    });
-
-    grid.appendChild(card);
-  });
-
-  modal.classList.add("is-open");
-}
-
-function closeZonePicker() {
-  const modal = document.getElementById("modalZonePicker");
-  if (modal) modal.classList.remove("is-open");
-}
-
-// ==============================================================================
-// RECETAS DEL CHEF (IDEAS RÁPIDAS LISTAS)
+// RECETAS DEL CHEF (MODAL)
 // ==============================================================================
 function renderChefRecipes() {
   const list = document.getElementById("chefRecipesList");
@@ -1139,22 +1177,20 @@ function renderChefRecipes() {
   });
 }
 
-function loadChefPreset(index) {
-  const preset = CHEF_PRESETS[index];
+function loadChefPreset(idx) {
+  const preset = CHEF_PRESETS[idx];
   if (!preset) return;
 
-  setMode(preset.mode, false);
   AppState.selectedFoods = {
-    veggie: preset.items.veggie || null,
-    protein: preset.items.protein || null,
-    carb: preset.items.carb || null,
-    fat: preset.items.fat || null,
-    legume: preset.items.legume || null
+    main: preset.foods.main || null,
+    veggie: preset.foods.veggie || null,
+    carb: preset.foods.carb || null,
+    fat: preset.foods.fat || null
   };
+  AppState.currentStep = "main";
 
-  updatePlateView();
-  renderFoodCatalog();
-  showToast(`🍽️ Plato cargado: ${preset.title}`);
+  updateFullUI();
+  showToast(`🍽️ Cargado: ${preset.title}`);
 }
 
 function closeChefModal() {
@@ -1163,41 +1199,39 @@ function closeChefModal() {
 }
 
 // ==============================================================================
-// GENERADOR ALEATORIO DE PLATO EQUILIBRADO
+// GENERADOR ALEATORIO
 // ==============================================================================
 function generateRandomPlate() {
-  const veggies = FOOD_DATABASE.filter(f => f.category === "veggies");
-  const carbs = FOOD_DATABASE.filter(f => f.category === "carbs");
-  const fats = FOOD_DATABASE.filter(f => f.category === "fats");
+  const mains = FOOD_DATABASE.filter(f => f.stepGroup === "main");
+  const randomMain = getRandomItem(mains);
 
-  // Decidir si usamos proteína grasa o magra
-  const useFatty = Math.random() > 0.5;
+  const veggies = FOOD_DATABASE.filter(f => f.stepGroup === "veggie");
+  const randomVeggie = getRandomItem(veggies);
 
-  if (useFatty) {
-    const fattyProteins = FOOD_DATABASE.filter(f => f.category === "fatty-protein");
-    setMode("fatty-protein", false);
-    AppState.selectedFoods = {
-      veggie: getRandomItem(veggies).id,
-      protein: getRandomItem(fattyProteins).id,
-      carb: getRandomItem(carbs).id,
-      fat: null,
-      legume: null
-    };
-  } else {
-    const leanProteins = FOOD_DATABASE.filter(f => f.category === "lean-protein");
-    setMode("standard", false);
-    AppState.selectedFoods = {
-      veggie: getRandomItem(veggies).id,
-      protein: getRandomItem(leanProteins).id,
-      carb: getRandomItem(carbs).id,
-      fat: getRandomItem(fats).id,
-      legume: null
-    };
+  AppState.selectedFoods = {
+    main: randomMain.id,
+    veggie: randomVeggie.id,
+    carb: null,
+    fat: null
+  };
+
+  const rules = getCompatibilityRules();
+
+  if (!rules.carbSatisfiedByMain) {
+    const carbs = FOOD_DATABASE.filter(f => f.stepGroup === "carb");
+    AppState.selectedFoods.carb = getRandomItem(carbs).id;
   }
 
-  updatePlateView();
-  renderFoodCatalog();
-  showToast("🎲 ¡Plato saludable sorpresa generado!");
+  if (!rules.fatSatisfiedByMain) {
+    const compatibleFats = FOOD_DATABASE.filter(f => f.stepGroup === "fat" && !rules.incompatibleFoodIds.includes(f.id));
+    if (compatibleFats.length > 0) {
+      AppState.selectedFoods.fat = getRandomItem(compatibleFats).id;
+    }
+  }
+
+  AppState.currentStep = "main";
+  updateFullUI();
+  showToast("🎲 ¡Plato equilibrado generado!");
 }
 
 function getRandomItem(arr) {
@@ -1205,108 +1239,65 @@ function getRandomItem(arr) {
 }
 
 // ==============================================================================
-// COMPARTIR / COPIAR LISTA DE LA COMPRA O RECETA
+// COMPARTIR / COPIAR RECETA
 // ==============================================================================
 function sharePlate() {
+  const m = getFoodById(AppState.selectedFoods.main);
   const v = getFoodById(AppState.selectedFoods.veggie);
-  const p = getFoodById(AppState.selectedFoods.protein);
   const c = getFoodById(AppState.selectedFoods.carb);
   const f = getFoodById(AppState.selectedFoods.fat);
-  const l = getFoodById(AppState.selectedFoods.legume);
 
   const lines = [
-    `🥗 MI PLATO SALUDABLE (Regla del Plato Equilibrado)`,
-    `Modo: ${PLATE_MODES[AppState.currentMode].name}`,
+    `🥗 MI PLATO EQUILIBRADO (Comida Real y Limpia)`,
     `----------------------------------------`
   ];
 
-  if (v) lines.push(`🥦 50% Verduras: ${v.name} (${v.portion})`);
-  if (p) lines.push(`🥩 Proteína: ${p.name} (${p.portion})`);
-  if (l) lines.push(`🫘 Legumbres: ${l.name} (${l.portion})`);
-  if (c) lines.push(`🍠 Hidratos: ${c.name} (${c.portion})`);
-  if (f) lines.push(`🥑 Grasa saludable: ${f.name} (${f.portion})`);
+  if (v) lines.push(`🥦 50% Verduras: ${v.name}`);
+  if (m) lines.push(`🥩 Plato Principal: ${m.name}`);
+  if (c) lines.push(`🍠 Hidratos: ${c.name}`);
+  if (f) lines.push(`🥑 Grasa Saludable: ${f.name}`);
 
   lines.push(`----------------------------------------`);
-  lines.push(`✨ 100% Comida Real, Sin Procesados`);
+  lines.push(`✨ Diseñado con la regla del plato saludable`);
 
-  const shareText = lines.join("\n");
+  const text = lines.join("\n");
 
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(shareText).then(() => {
-      showToast("📋 ¡Plato y lista de ingredientes copiada al portapapeles!");
-    }).catch(() => {
-      fallbackCopy(shareText);
-    });
+    navigator.clipboard.writeText(text).then(() => {
+      showToast("📋 ¡Plato e ingredientes copiados!");
+    }).catch(() => fallbackCopy(text));
   } else {
-    fallbackCopy(shareText);
+    fallbackCopy(text);
   }
 }
 
 function fallbackCopy(text) {
-  const textArea = document.createElement("textarea");
-  textArea.value = text;
-  document.body.appendChild(textArea);
-  textArea.select();
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
   try {
     document.execCommand('copy');
-    showToast("📋 ¡Plato copiado al portapapeles!");
-  } catch (err) {
+    showToast("📋 ¡Copiado al portapapeles!");
+  } catch (e) {
     alert(text);
   }
-  document.body.removeChild(textArea);
+  document.body.removeChild(ta);
 }
 
 // ==============================================================================
-// CAMBIO DE MODOS
+// REINICIAR PLATO
 // ==============================================================================
-function setMode(modeKey, resetFoods = false) {
-  if (!PLATE_MODES[modeKey]) return;
-  AppState.currentMode = modeKey;
-
-  // Actualizar chips activos
-  const chips = document.querySelectorAll("#variationChips .chip-btn");
-  chips.forEach(chip => {
-    if (chip.getAttribute("data-mode") === modeKey) {
-      chip.classList.add("active");
-    } else {
-      chip.classList.remove("active");
-    }
-  });
-
-  const badge = document.getElementById("currentModeBadge");
-  if (badge) badge.textContent = PLATE_MODES[modeKey].name;
-
-  if (resetFoods) {
-    // Si cambia expresamente a fatty-protein y no tiene proteína grasa, asignarle una
-    if (modeKey === "fatty-protein" && (!AppState.selectedFoods.protein || getFoodById(AppState.selectedFoods.protein)?.macroType !== "protein_fatty")) {
-      AppState.selectedFoods.protein = "pg_salmon";
-      AppState.selectedFoods.fat = null; // No requiere grasa separada
-    } else if (modeKey === "legumes") {
-      AppState.selectedFoods.legume = "l_garbanzos";
-      AppState.selectedFoods.protein = null;
-      AppState.selectedFoods.carb = null;
-    }
-  }
-
-  updatePlateView();
-}
-
-// ==============================================================================
-// TOAST NOTIFICATIONS
-// ==============================================================================
-let toastTimer = null;
-function showToast(message) {
-  const toast = document.getElementById("toastNotification");
-  const msgEl = document.getElementById("toastMessage");
-  if (!toast || !msgEl) return;
-
-  msgEl.textContent = message;
-  toast.classList.add("is-visible");
-
-  if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => {
-    toast.classList.remove("is-visible");
-  }, 2800);
+function resetPlate() {
+  AppState.selectedFoods = {
+    main: null,
+    veggie: null,
+    carb: null,
+    fat: null
+  };
+  AppState.currentStep = "main";
+  updateFullUI();
+  showToast("🔄 Plato reiniciado al diagrama base.");
 }
 
 // ==============================================================================
@@ -1317,88 +1308,61 @@ function getFoodById(id) {
   return FOOD_DATABASE.find(f => f.id === id) || null;
 }
 
+function capitalize(str) {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+let toastTimer = null;
+function showToast(msg) {
+  const toast = document.getElementById("toastNotification");
+  const msgEl = document.getElementById("toastMessage");
+  if (!toast || !msgEl) return;
+  msgEl.textContent = msg;
+  toast.classList.add("is-visible");
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.classList.remove("is-visible");
+  }, 2600);
+}
+
 // ==============================================================================
-// CONFIGURACIÓN DE EVENT LISTENERS
+// LISTENERS
 // ==============================================================================
 function setupEventListeners() {
-  // Selector de variaciones
-  const variationChips = document.getElementById("variationChips");
-  if (variationChips) {
-    variationChips.addEventListener("click", (e) => {
-      const btn = e.target.closest(".chip-btn");
+  // Stepper clicks
+  const stepper = document.getElementById("wizardStepper");
+  if (stepper) {
+    stepper.addEventListener("click", (e) => {
+      const btn = e.target.closest(".step-chip");
       if (btn) {
-        const mode = btn.getAttribute("data-mode");
-        setMode(mode, true);
+        const step = btn.getAttribute("data-step");
+        setWizardStep(step);
       }
     });
   }
 
-  // Buscador de alimentos
-  const searchInput = document.getElementById("foodSearchInput");
-  const clearSearchBtn = document.getElementById("clearSearchBtn");
-  if (searchInput) {
-    searchInput.addEventListener("input", (e) => {
-      AppState.searchQuery = e.target.value;
-      if (clearSearchBtn) {
-        clearSearchBtn.style.display = e.target.value ? "block" : "none";
-      }
-      renderFoodCatalog();
+  // Toggle filtrar incompatibles
+  const toggle = document.getElementById("toggleHideIncompatible");
+  if (toggle) {
+    toggle.addEventListener("change", (e) => {
+      AppState.hideIncompatible = e.target.checked;
+      renderStepOptions(getCompatibilityRules());
     });
   }
 
-  if (clearSearchBtn && searchInput) {
-    clearSearchBtn.addEventListener("click", () => {
-      searchInput.value = "";
-      AppState.searchQuery = "";
-      clearSearchBtn.style.display = "none";
-      renderFoodCatalog();
-    });
-  }
+  // Botón Reiniciar
+  const btnReset = document.getElementById("btnResetPlate");
+  if (btnReset) btnReset.addEventListener("click", resetPlate);
 
-  // Filtros de categoría de alimentos
-  const catButtons = document.getElementById("categoryFilterButtons");
-  if (catButtons) {
-    catButtons.addEventListener("click", (e) => {
-      const btn = e.target.closest(".cat-pill");
-      if (btn) {
-        document.querySelectorAll("#categoryFilterButtons .cat-pill").forEach(p => p.classList.remove("active"));
-        btn.classList.add("active");
-        AppState.activeCategoryFilter = btn.getAttribute("data-category");
-        renderFoodCatalog();
-      }
-    });
-  }
+  // Compartir y sorpresa
+  const btnShare = document.getElementById("btnSharePlate");
+  if (btnShare) btnShare.addEventListener("click", sharePlate);
 
-  // Botón Vaciar Plato
-  const btnClearPlate = document.getElementById("btnClearPlate");
-  if (btnClearPlate) {
-    btnClearPlate.addEventListener("click", () => {
-      AppState.selectedFoods = {
-        veggie: null,
-        protein: null,
-        carb: null,
-        fat: null,
-        legume: null
-      };
-      updatePlateView();
-      renderFoodCatalog();
-      showToast("Plato vaciado. ¡Comienza a llenarlo!");
-    });
-  }
+  const btnRandom = document.getElementById("btnRandomPlate");
+  if (btnRandom) btnRandom.addEventListener("click", generateRandomPlate);
 
-  // Botón Compartir / Copiar
-  const btnSharePlate = document.getElementById("btnSharePlate");
-  if (btnSharePlate) {
-    btnSharePlate.addEventListener("click", sharePlate);
-  }
-
-  // Botón Plato Sorpresa
-  const btnRandomPlate = document.getElementById("btnRandomPlate");
-  if (btnRandomPlate) {
-    btnRandomPlate.addEventListener("click", generateRandomPlate);
-  }
-
-  // Modal Imagen Original
+  // Modales
   const btnViewOriginal = document.getElementById("btnViewOriginal");
   const modalOriginal = document.getElementById("modalOriginal");
   const btnCloseOriginal = document.getElementById("btnCloseOriginal");
@@ -1414,7 +1378,6 @@ function setupEventListeners() {
     });
   }
 
-  // Modal Chef
   const btnQuickChef = document.getElementById("btnQuickChef");
   const modalChef = document.getElementById("modalChef");
   const btnCloseChef = document.getElementById("btnCloseChef");
@@ -1430,22 +1393,8 @@ function setupEventListeners() {
     });
   }
 
-  // Modal Zone Picker
-  const modalZone = document.getElementById("modalZonePicker");
-  const btnCloseZone = document.getElementById("btnCloseZonePicker");
-  if (btnCloseZone && modalZone) {
-    btnCloseZone.addEventListener("click", closeZonePicker);
-  }
-  if (modalZone) {
-    modalZone.addEventListener("click", (e) => {
-      if (e.target === modalZone) closeZonePicker();
-    });
-  }
-
-  // Cerrar modales con tecla ESC
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
-      closeZonePicker();
       closeChefModal();
       if (modalOriginal) modalOriginal.classList.remove("is-open");
     }

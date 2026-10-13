@@ -1,12 +1,13 @@
 /* =========================================================
    DISEÑA TU PLATO SALUDABLE - ESTILOS MÓVIL FIRST & RESPONSIVE
+   Flujo Guiado Paso a Paso y Compatibilidad Inteligente
    ========================================================= */
 
 :root {
   --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 
-  /* Colores Principales de la Dieta */
+  /* Colores Principales de Macronutrientes */
   --color-veggie: #16a34a;
   --color-veggie-light: #dcfce7;
   --color-veggie-dark: #14532d;
@@ -44,7 +45,6 @@
 
   --brand-primary: #10b981;
   --brand-primary-hover: #059669;
-  --brand-glow: rgba(16, 185, 129, 0.25);
 
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
@@ -84,7 +84,6 @@ h1, h2, h3, h4, h5 {
   letter-spacing: -0.02em;
 }
 
-/* Botones genéricos */
 button {
   font-family: var(--font-heading);
   cursor: pointer;
@@ -198,88 +197,6 @@ button:active {
 }
 
 /* =========================================================
-   SELECTOR DE VARIACIONES
-   ========================================================= */
-.section-variations {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.section-header-compact {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.section-header-compact h2 {
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.badge-tag {
-  background: #ecfdf5;
-  color: #065f46;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 3px 9px;
-  border-radius: var(--radius-full);
-  border: 1px solid #a7f3d0;
-}
-
-.variation-chips-scroll {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 6px;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-}
-
-.variation-chips-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.chip-btn {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  background: var(--bg-card);
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  text-align: left;
-}
-
-.chip-btn .chip-icon {
-  font-size: 1.4rem;
-}
-
-.chip-btn .chip-text strong {
-  display: block;
-  font-size: 0.85rem;
-  color: var(--text-main);
-}
-
-.chip-btn .chip-text small {
-  display: block;
-  font-size: 0.72rem;
-  color: var(--text-muted);
-}
-
-.chip-btn.active {
-  background: #f0fdf4;
-  border-color: #10b981;
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-}
-
-.chip-btn.active .chip-text strong {
-  color: #065f46;
-}
-
-/* =========================================================
    SECCIÓN DEL PLATO INTERACTIVO (SVG)
    ========================================================= */
 .section-plate {
@@ -296,23 +213,42 @@ button:active {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
-.plate-instruction {
+.plate-top-bar {
   width: 100%;
-  text-align: center;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #059669;
-  background: #f0fdf4;
-  padding: 6px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge-status-pill {
+  background: #f1f5f9;
+  color: var(--text-main);
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 4px 10px;
   border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+}
+
+.btn-text-reset {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.btn-text-reset:hover {
+  background: #fee2e2;
+  color: #dc2626;
 }
 
 .plate-viewport {
   width: 100%;
-  max-width: 340px;
+  max-width: 330px;
   aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
@@ -334,7 +270,7 @@ button:active {
   user-select: none;
 }
 
-/* Estilos de las porciones del plato */
+/* Porciones del plato */
 .plate-slice {
   cursor: pointer;
   transition: transform 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
@@ -342,7 +278,7 @@ button:active {
 }
 
 .plate-slice:hover {
-  opacity: 0.93;
+  opacity: 0.94;
   filter: brightness(1.05);
 }
 
@@ -360,8 +296,8 @@ button:active {
   fill: rgba(255, 255, 255, 0.95);
   stroke: rgba(0, 0, 0, 0.08);
   stroke-width: 1;
-  rx: 8;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+  rx: 10;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
 }
 
 .slice-text-percent {
@@ -375,9 +311,10 @@ button:active {
 .slice-text-label {
   font-family: var(--font-heading);
   font-weight: 700;
-  font-size: 11px;
+  font-size: 10px;
   text-anchor: middle;
   dominant-baseline: central;
+  fill: #475569;
 }
 
 .slice-icon-emoji {
@@ -426,37 +363,352 @@ button:active {
   position: relative;
 }
 
-/* Insight Coach */
-.coach-insight-card {
+/* Alerta de Compatibilidad Inteligente */
+.smart-rule-alert {
   width: 100%;
   display: flex;
-  gap: 10px;
-  background: #f8fafc;
-  border: 1px dashed #cbd5e1;
-  padding: 10px 14px;
+  gap: 12px;
+  background: #ecfdf5;
+  border: 1.5px solid #a7f3d0;
+  padding: 12px 14px;
   border-radius: var(--radius-md);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
+  transition: all 0.3s ease;
 }
 
-.coach-icon {
-  font-size: 1.25rem;
+.smart-rule-alert.alert-warning {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.smart-rule-alert.alert-info {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.rule-alert-icon {
+  font-size: 1.4rem;
   flex-shrink: 0;
+  line-height: 1.2;
 }
 
-.coach-body strong {
+.rule-alert-body strong {
   display: block;
   font-family: var(--font-heading);
   color: var(--text-main);
   margin-bottom: 2px;
+  font-size: 0.88rem;
 }
 
-.coach-body p {
-  color: var(--text-muted);
+.rule-alert-body p {
+  color: #334155;
   line-height: 1.4;
 }
 
 /* =========================================================
-   SELECCIÓN ACTUAL (SLOTS)
+   ASISTENTE GUIADO PASO A PASO (WIZARD)
+   ========================================================= */
+.section-wizard {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.wizard-stepper {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.wizard-stepper::-webkit-scrollbar {
+  display: none;
+}
+
+.step-chip {
+  flex: 1 1 0;
+  min-width: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: var(--bg-subtle);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.step-chip .step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  background: #cbd5e1;
+  color: #ffffff;
+  font-size: 0.68rem;
+}
+
+.step-chip.active {
+  background: #0f172a;
+  border-color: #0f172a;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
+}
+
+.step-chip.active .step-num {
+  background: #10b981;
+}
+
+.step-chip.completed {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #166534;
+}
+
+.step-chip.completed .step-num {
+  background: #16a34a;
+}
+
+.step-chip.locked {
+  opacity: 0.6;
+  background: #f8fafc;
+  border-style: dashed;
+}
+
+.step-content-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (min-width: 480px) {
+  .step-content-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+}
+
+.step-content-header h2 {
+  font-size: 1.05rem;
+  line-height: 1.2;
+}
+
+.step-instruction {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+  margin-top: 3px;
+}
+
+/* Switch toggle */
+.step-filters-aux {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.toggle-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-switch input {
+  display: none;
+}
+
+.toggle-slider {
+  width: 32px;
+  height: 18px;
+  background-color: #cbd5e1;
+  border-radius: var(--radius-full);
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 2px;
+  top: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: #10b981;
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(14px);
+}
+
+.toggle-label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* Grid de opciones del paso actual */
+.step-options-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 480px) {
+  .step-options-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.step-food-card {
+  background: #ffffff;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.step-food-card:hover {
+  border-color: #10b981;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.step-food-card.selected {
+  border-color: #10b981;
+  background: #f0fdf4;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+}
+
+.step-food-card.incompatible {
+  opacity: 0.55;
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  cursor: not-allowed;
+}
+
+.step-food-card.incompatible:hover {
+  transform: none;
+  border-color: #e2e8f0;
+  box-shadow: var(--shadow-sm);
+}
+
+.food-card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.food-card-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.food-card-emoji {
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.food-card-name-group h4 {
+  font-size: 0.92rem;
+  line-height: 1.2;
+}
+
+.food-card-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+}
+
+.badge-macro-fatty { background: var(--color-fatty-light); color: var(--color-fatty-dark); }
+.badge-macro-lean { background: var(--color-lean-light); color: var(--color-lean-dark); }
+.badge-macro-legume { background: var(--color-legume-light); color: var(--color-legume-dark); }
+.badge-macro-veggie { background: var(--color-veggie-light); color: var(--color-veggie-dark); }
+.badge-macro-carb { background: var(--color-carb-light); color: var(--color-carb-dark); }
+.badge-macro-fat { background: var(--color-fat-light); color: var(--color-fat-dark); }
+
+.food-incompatible-tag {
+  background: #fee2e2;
+  color: #991b1b;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.food-card-clean-tip {
+  font-size: 0.77rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+  background: var(--bg-subtle);
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.food-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.food-portion-text {
+  font-size: 0.7rem;
+  color: var(--text-light);
+}
+
+.btn-choose-item {
+  padding: 6px 12px;
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.btn-choose-item.btn-is-chosen {
+  background: #10b981;
+  color: #ffffff;
+  border-color: #10b981;
+}
+
+/* =========================================================
+   RESUMEN DEL PLATO (RANURAS)
    ========================================================= */
 .section-selection {
   background: var(--bg-card);
@@ -479,16 +731,13 @@ button:active {
   font-size: 1.1rem;
 }
 
-.btn-text-danger {
-  font-size: 0.8rem;
-  color: #dc2626;
-  font-weight: 600;
+.clean-badge {
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 0.75rem;
+  font-weight: 700;
   padding: 4px 8px;
-  border-radius: var(--radius-sm);
-}
-
-.btn-text-danger:hover {
-  background: #fee2e2;
+  border-radius: var(--radius-full);
 }
 
 .macro-slots-grid {
@@ -512,7 +761,6 @@ button:active {
   border: 1.5px solid var(--border-color);
   border-radius: var(--radius-md);
   gap: 10px;
-  transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
 }
@@ -525,6 +773,11 @@ button:active {
   bottom: 0;
   width: 5px;
   background: var(--slot-color, #cbd5e1);
+}
+
+.slot-card.locked-by-rule {
+  background: #f8fafc;
+  border-style: dashed;
 }
 
 .slot-info {
@@ -587,16 +840,6 @@ button:active {
   color: var(--text-main);
 }
 
-.slot-btn-choose {
-  background: #ecfdf5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
-}
-
-.slot-btn-choose:hover {
-  background: #d1fae5;
-}
-
 .plate-action-buttons {
   display: flex;
   gap: 10px;
@@ -634,209 +877,6 @@ button:active {
 
 .btn-secondary:hover {
   background: #f8fafc;
-}
-
-/* =========================================================
-   CATÁLOGO DE ALIMENTOS LIMPIOS
-   ========================================================= */
-.section-catalog {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.clean-badge {
-  background: #dcfce7;
-  color: #15803d;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: var(--radius-full);
-}
-
-.section-desc {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  margin-top: -6px;
-}
-
-.search-bar-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background: #ffffff;
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 8px 12px;
-  box-shadow: var(--shadow-sm);
-}
-
-.search-bar-wrap:focus-within {
-  border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
-}
-
-.search-icon {
-  font-size: 1rem;
-  margin-right: 8px;
-  color: var(--text-muted);
-}
-
-.search-bar-wrap input {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  color: var(--text-main);
-  background: transparent;
-}
-
-.clear-search-btn {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  padding: 2px 6px;
-}
-
-.category-filters-scroll {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  scrollbar-width: none;
-}
-
-.category-filters-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.cat-pill {
-  flex: 0 0 auto;
-  padding: 6px 14px;
-  background: #ffffff;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-full);
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  box-shadow: var(--shadow-sm);
-}
-
-.cat-pill.active {
-  background: #0f172a;
-  color: #ffffff;
-  border-color: #0f172a;
-}
-
-.food-catalog-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-
-@media (min-width: 520px) {
-  .food-catalog-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.food-card {
-  background: #ffffff;
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.2s ease;
-}
-
-.food-card:hover {
-  border-color: #10b981;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.food-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.food-card-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.food-emoji-large {
-  font-size: 1.75rem;
-  line-height: 1;
-}
-
-.food-title-group h4 {
-  font-size: 0.92rem;
-  margin-bottom: 1px;
-}
-
-.food-type-tag {
-  font-size: 0.68rem;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: var(--radius-full);
-}
-
-.tag-veggie { background: var(--color-veggie-light); color: var(--color-veggie-dark); }
-.tag-lean { background: var(--color-lean-light); color: var(--color-lean-dark); }
-.tag-fatty { background: var(--color-fatty-light); color: var(--color-fatty-dark); }
-.tag-carb { background: var(--color-carb-light); color: var(--color-carb-dark); }
-.tag-fat { background: var(--color-fat-light); color: var(--color-fat-dark); }
-.tag-legume { background: var(--color-legume-light); color: var(--color-legume-dark); }
-
-.food-card-tip {
-  font-size: 0.77rem;
-  color: var(--text-muted);
-  line-height: 1.35;
-  background: var(--bg-subtle);
-  padding: 6px 8px;
-  border-radius: var(--radius-sm);
-}
-
-.food-card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: auto;
-  padding-top: 6px;
-}
-
-.food-portion-hint {
-  font-size: 0.7rem;
-  color: var(--text-light);
-}
-
-.btn-add-food {
-  padding: 6px 12px;
-  background: #ecfdf5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
-  border-radius: var(--radius-full);
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.btn-add-food:hover {
-  background: #10b981;
-  color: #ffffff;
-  border-color: #10b981;
-}
-
-.btn-add-food.is-selected {
-  background: #10b981;
-  color: #ffffff;
 }
 
 /* =========================================================
@@ -885,7 +925,7 @@ button:active {
 }
 
 /* =========================================================
-   MODALES Y DIÁLOGOS
+   MODALES
    ========================================================= */
 .modal-backdrop {
   position: fixed;
@@ -925,14 +965,6 @@ button:active {
   transform: translateY(0);
 }
 
-/* Bottom sheet variant para móviles */
-.modal-dialog.bottom-sheet {
-  max-height: 85vh;
-  margin-top: auto;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
 .modal-header {
   display: flex;
   align-items: center;
@@ -941,13 +973,8 @@ button:active {
   border-bottom: 1px solid var(--border-color);
 }
 
-.modal-header-titles h4 {
+.modal-header h4 {
   font-size: 1rem;
-}
-
-.picker-subtitle {
-  font-size: 0.75rem;
-  color: var(--text-muted);
 }
 
 .modal-close {
@@ -1000,7 +1027,7 @@ button:active {
   font-weight: 600;
 }
 
-/* Lista de recetas de inspiración */
+/* Chef recipes modal */
 .chef-recipes-list {
   display: flex;
   flex-direction: column;
@@ -1059,37 +1086,8 @@ button:active {
   white-space: nowrap;
 }
 
-/* Zone Picker alimentos */
-.zone-foods-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-}
-
-@media (min-width: 480px) {
-  .zone-foods-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.zone-pick-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px;
-  background: #ffffff;
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-}
-
-.zone-pick-card:hover {
-  border-color: #10b981;
-  background: #f0fdf4;
-}
-
 /* =========================================================
-   TOAST NOTIFICACIÓN
+   TOAST
    ========================================================= */
 .toast-notification {
   position: fixed;
