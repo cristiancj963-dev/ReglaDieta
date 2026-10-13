@@ -321,7 +321,6 @@ function refreshPlateDisplay() {
 
   drawSvgPlate(rules);
   renderMacroCards(rules);
-  updateStatusBox(rules);
 }
 
 // ==============================================================================
@@ -718,49 +717,7 @@ function removeFoodFromZone(zoneKey) {
   showToast(`Has quitado ${oldFood ? oldFood.name : 'el alimento'} del plato`);
 }
 
-// ==============================================================================
-// MENSAJE DE ESTADO INFERIOR
-// ==============================================================================
-function updateStatusBox(rules) {
-  const box = document.getElementById("plateStatusBox");
-  const icon = document.getElementById("statusIcon");
-  const title = document.getElementById("statusTitle");
-  const desc = document.getElementById("statusDesc");
-  if (!box || !title || !desc) return;
 
-  const count = [CurrentPlate.veggie, CurrentPlate.protein, CurrentPlate.carb, CurrentPlate.fat].filter(Boolean).length;
-
-  if (!CurrentPlate.protein) {
-    icon.textContent = "💡";
-    title.textContent = "Comienza eligiendo tu comida fuerte";
-    desc.textContent = "Toca en la carne o pescado (20%) en el plato. Si eliges salmón o huevos, el plato se adaptará solo.";
-    return;
-  }
-
-  if (rules.isFatty) {
-    icon.textContent = "🐟";
-    title.textContent = `Plato adaptado con ${rules.proteinFood.name}`;
-    desc.textContent = `Al llevar grasa natural, no necesitas aceite ni frutos secos. Completa el plato con tus verduras (50%) y patata o arroz (20%).`;
-    return;
-  }
-
-  if (rules.isLegume) {
-    icon.textContent = "🫘";
-    title.textContent = `Plato adaptado con ${rules.proteinFood.name}`;
-    desc.textContent = `Las legumbres ya aportan hidratos y proteína vegetal. Añade verdura y un chorrito de aceite de oliva.`;
-    return;
-  }
-
-  if (count >= 4) {
-    icon.textContent = "🎉";
-    title.textContent = "¡Plato 100% Equilibrado y Completo!";
-    desc.textContent = "Cumple perfectamente con la regla de la dieta: comida limpia, no procesada y sana.";
-  } else {
-    icon.textContent = "⏳";
-    title.textContent = "Sigue completando tu plato";
-    desc.textContent = "Toca en las zonas vacías del plato para añadir lo que te falta.";
-  }
-}
 
 // ==============================================================================
 // MODAL DE SELECCIÓN DE ALIMENTO (MUY GRANDE Y VISUAL)
@@ -1010,21 +967,7 @@ function setupAppEvents() {
   if (btnClosePicker) btnClosePicker.addEventListener("click", closePickerModal);
   if (btnCancelPicker) btnCancelPicker.addEventListener("click", closePickerModal);
 
-  // Botón foto original
-  const btnViewOriginal = document.getElementById("btnViewOriginal");
-  const modalOriginal = document.getElementById("modalOriginal");
-  const btnCloseOriginal = document.getElementById("btnCloseOriginal");
-  const btnConfirmClose = document.getElementById("btnConfirmCloseOriginal");
 
-  if (btnViewOriginal && modalOriginal) {
-    btnViewOriginal.addEventListener("click", () => modalOriginal.classList.add("is-open"));
-  }
-  if (btnCloseOriginal && modalOriginal) {
-    btnCloseOriginal.addEventListener("click", () => modalOriginal.classList.remove("is-open"));
-  }
-  if (btnConfirmClose && modalOriginal) {
-    btnConfirmClose.addEventListener("click", () => modalOriginal.classList.remove("is-open"));
-  }
 
   // Botón recetas chef
   const btnChef = document.getElementById("btnQuickRecipes");

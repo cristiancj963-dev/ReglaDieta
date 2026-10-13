@@ -255,35 +255,7 @@ button:active {
   dominant-baseline: central;
 }
 
-/* Caja de estado del plato */
-.plate-status-box {
-  width: 100%;
-  display: flex;
-  gap: 12px;
-  background: #f1f5f9;
-  border: 2px solid var(--border-strong);
-  padding: 14px 16px;
-  border-radius: var(--radius-btn);
-}
 
-.status-icon {
-  font-size: 1.8rem;
-  line-height: 1.1;
-  flex-shrink: 0;
-}
-
-.status-text strong {
-  display: block;
-  font-size: 1.05rem;
-  color: var(--text-main);
-  margin-bottom: 2px;
-}
-
-.status-text p {
-  font-size: 0.95rem;
-  color: var(--text-muted);
-  line-height: 1.4;
-}
 
 /* =========================================================
    TARJETAS GRANDES DE CADA ZONA
@@ -714,28 +686,7 @@ button:active {
   gap: 12px;
 }
 
-.image-box {
-  width: 100%;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 2px solid var(--border-strong);
-}
 
-.image-box img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.btn-dialog-confirm {
-  width: 100%;
-  padding: 14px;
-  background: #15803d;
-  color: #ffffff;
-  border-radius: var(--radius-btn);
-  font-size: 1rem;
-  font-weight: 800;
-}
 
 /* Chef list */
 .chef-list {

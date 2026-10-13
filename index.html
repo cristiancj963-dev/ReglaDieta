@@ -21,9 +21,6 @@
         <span class="brand-title">Mi Plato Saludable</span>
       </div>
       <div class="header-buttons">
-        <button id="btnViewOriginal" class="btn-header" title="Ver foto original">
-          🖼️ Ver Foto Guía
-        </button>
         <button id="btnResetPlate" class="btn-header btn-header-reset" title="Borrar todo y empezar">
           🔄 Empezar de cero
         </button>
@@ -74,15 +71,6 @@
             <circle cx="210" cy="210" r="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
             <circle cx="210" cy="210" r="8" fill="#15803d"/>
           </svg>
-        </div>
-
-        <!-- Mensaje de estado fácil de entender -->
-        <div class="plate-status-box" id="plateStatusBox">
-          <div class="status-icon" id="statusIcon">💡</div>
-          <div class="status-text">
-            <strong id="statusTitle">Pulsa en una zona para empezar</strong>
-            <p id="statusDesc">Por ejemplo, pulsa en la carne o pescado (20%) para elegir tu plato principal.</p>
-          </div>
         </div>
 
       </div>
@@ -173,22 +161,7 @@
     </div>
   </div>
 
-  <!-- MODAL FOTO ORIGINAL DE LA DIETA -->
-  <div class="modal-backdrop" id="modalOriginal">
-    <div class="modal-dialog">
-      <div class="modal-dialog-header">
-        <h3>Infografía original de la dieta</h3>
-        <button class="btn-dialog-close" id="btnCloseOriginal">✕ Cerrar</button>
-      </div>
-      <div class="modal-dialog-body">
-        <p class="dialog-note">Esta es la imagen de referencia del plato:</p>
-        <div class="image-box">
-          <img src="reglaDieta.jpg" alt="Regla de la dieta - Diseña tu plato" />
-        </div>
-        <button class="btn-dialog-confirm" id="btnConfirmCloseOriginal">Entendido</button>
-      </div>
-    </div>
-  </div>
+
 
   <!-- MODAL PLATOS DE EJEMPLO DEL CHEF -->
   <div class="modal-backdrop" id="modalChef">
