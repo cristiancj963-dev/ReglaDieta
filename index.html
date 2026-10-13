@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Diseña tu Plato Saludable | Regla 50-20-20-10</title>
+  <meta name="description" content="Panel interactivo para crear platos equilibrados con la regla del plato saludable: 50% verduras, 20% proteína, 20% hidratos y 10% grasas. Comidas limpias y no procesadas." />
+  <meta name="theme-color" content="#10b981" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Header de la aplicación -->
+  <header class="app-header">
+    <div class="header-top">
+      <div class="brand-badge">
+        <span class="brand-icon">🥗</span>
+        <span class="brand-title">Regla del Plato</span>
+      </div>
+      <div class="header-actions">
+        <button id="btnViewOriginal" class="btn-pill btn-pill-outline" title="Ver imagen original de referencia">
+          <span>🖼️ Infografía</span>
+        </button>
+        <button id="btnQuickChef" class="btn-pill btn-pill-accent" title="Inspiración de platos ya hechos">
+          <span>⚡ Ideas</span>
+        </button>
+      </div>
+    </div>
+    <div class="header-banner">
+      <h1>Crea tu Plato Saludable</h1>
+      <p class="subtitle">50% Verduras · 20% Proteína · 20% Hidratos · 10% Grasas</p>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal (Mobile First) -->
+  <main class="main-content">
+    
+    <!-- Selector de Variaciones / Modos de la Dieta -->
+    <section class="section-variations">
+      <div class="section-header-compact">
+        <h2>Variación del plato</h2>
+        <span class="badge-tag" id="currentModeBadge">Estándar</span>
+      </div>
+      <div class="variation-chips-scroll" id="variationChips">
+        <button class="chip-btn active" data-mode="standard">
+          <span class="chip-icon">⚖️</span>
+          <div class="chip-text">
+            <strong>Estándar Magro</strong>
+            <small>50% V · 20% P · 20% HC · 10% G</small>
+          </div>
+        </button>
+        <button class="chip-btn" data-mode="fatty-protein">
+          <span class="chip-icon">🐟</span>
+          <div class="chip-text">
+            <strong>Proteína Grasa</strong>
+            <small>50% V · 30% P+G · 20% HC</small>
+          </div>
+        </button>
+        <button class="chip-btn" data-mode="legumes">
+          <span class="chip-icon">🫘</span>
+          <div class="chip-text">
+            <strong>Plato Legumbres</strong>
+            <small>50% V · 35% HC+P · 15% G</small>
+          </div>
+        </button>
+        <button class="chip-btn" data-mode="low-carb">
+          <span class="chip-icon">🥑</span>
+          <div class="chip-text">
+            <strong>Cena Ligera</strong>
+            <small>60% V · 30% P · 10% G</small>
+          </div>
+        </button>
+        <button class="chip-btn" data-mode="custom">
+          <span class="chip-icon">✨</span>
+          <div class="chip-text">
+            <strong>Personalizado</strong>
+            <small>Adapta con cada alimento</small>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Visualizador Interactivo del Plato (SVG interactivo) -->
+    <section class="section-plate">
+      <div class="plate-card">
+        <div class="plate-instruction">
+          <span>👆 Toca cualquier zona del plato para elegir alimentos limpios</span>
+        </div>
+
+        <div class="plate-viewport">
+          <div class="plate-dish">
+            <svg id="plateSvg" viewBox="0 0 400 400" class="interactive-svg">
+              <defs>
+                <!-- Filtros para sombras y profundidad sutil -->
+                <radialGradient id="plateRimGrad" cx="50%" cy="50%" r="50%">
+                  <stop offset="85%" stop-color="#f8fafc"/>
+                  <stop offset="97%" stop-color="#e2e8f0"/>
+                  <stop offset="100%" stop-color="#cbd5e1"/>
+                </radialGradient>
+                <filter id="shadowFilter" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="6" stdDeviation="8" flood-opacity="0.12"/>
+                </filter>
+              </defs>
+
+              <!-- Base del plato porcelana -->
+              <circle cx="200" cy="200" r="190" fill="url(#plateRimGrad)" stroke="#cbd5e1" stroke-width="4" filter="url(#shadowFilter)"/>
+              <circle cx="200" cy="200" r="172" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+              <circle cx="200" cy="200" r="168" fill="#fcfdfd" />
+
+              <!-- Grupo dinámico donde se dibujan las porciones -->
+              <g id="svgSlicesGroup"></g>
+
+              <!-- Centro decorativo sutil -->
+              <circle cx="200" cy="200" r="14" fill="#ffffff" stroke="#94a3b8" stroke-width="2" opacity="0.9" />
+              <circle cx="200" cy="200" r="5" fill="#10b981" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Indicador de balance nutricional (Barra de proporción) -->
+        <div class="plate-balance-meter">
+          <div class="balance-labels">
+            <span class="lbl-meter">Composición del plato:</span>
+            <span class="lbl-status" id="plateStatusSummary">100% Equilibrado</span>
+          </div>
+          <div class="multi-progress" id="multiProgressBar">
+            <!-- Barra con segmentos coloreados dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Mensaje de asesor nutricional inteligente / Consejo en vivo -->
+        <div class="coach-insight-card" id="coachInsight">
+          <div class="coach-icon">💡</div>
+          <div class="coach-body">
+            <strong id="coachInsightTitle">Regla del plato equilibrado</strong>
+            <p id="coachInsightText">Llena la mitad con verduras frescas o cocinadas. Añade proteína limpia y granos enteros para mantener tu energía estable.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Resumen de Ingredientes Seleccionados en tu Plato -->
+    <section class="section-selection">
+      <div class="section-title-row">
+        <h3>Tu Plato Actual</h3>
+        <button id="btnClearPlate" class="btn-text-danger" title="Vaciar selección">
+          🗑️ Vaciar
+        </button>
+      </div>
+
+      <div class="macro-slots-grid" id="macroSlotsGrid">
+        <!-- Renderizado dinámicamente por app.js -->
+      </div>
+
+      <!-- Acciones del plato -->
+      <div class="plate-action-buttons">
+        <button id="btnSharePlate" class="btn-secondary">
+          📋 Copiar Receta / Lista
+        </button>
+        <button id="btnRandomPlate" class="btn-primary">
+          🎲 Generar Plato Sorpresa
+        </button>
+      </div>
+    </section>
+
+    <!-- Explorador de Alimentos Limpios y No Procesados -->
+    <section class="section-catalog">
+      <div class="section-title-row">
+        <h3>Ideas de Comidas Limpias</h3>
+        <span class="clean-badge">🌱 100% Real Food</span>
+      </div>
+      <p class="section-desc">Priorizamos ingredientes enteros, de 1 solo ingrediente, sin ultraprocesados ni azúcares añadidos.</p>
+
+      <!-- Buscador y filtro de categorías -->
+      <div class="search-bar-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="foodSearchInput" placeholder="Buscar ingrediente (ej. salmón, boniato, espinacas...)" />
+        <button id="clearSearchBtn" class="clear-search-btn" style="display:none;">✕</button>
+      </div>
+
+      <div class="category-filters-scroll" id="categoryFilterButtons">
+        <button class="cat-pill active" data-category="all">Todos</button>
+        <button class="cat-pill" data-category="veggies">🥦 Verduras (50%)</button>
+        <button class="cat-pill" data-category="lean-protein">🍗 Proteínas Magras</button>
+        <button class="cat-pill" data-category="fatty-protein">🐟 Proteína + Grasa</button>
+        <button class="cat-pill" data-category="carbs">🍠 Hidratos Complejos</button>
+        <button class="cat-pill" data-category="fats">🥑 Grasas Saludables</button>
+        <button class="cat-pill" data-category="legumes">🫘 Legumbres</button>
+      </div>
+
+      <!-- Grid de tarjetas de alimentos -->
+      <div class="food-catalog-grid" id="foodCatalogGrid">
+        <!-- Generado dinámicamente -->
+      </div>
+    </section>
+
+    <!-- Sección Explicativa: Cómo funciona la adaptación del plato -->
+    <section class="section-guide-rules">
+      <div class="guide-card">
+        <h3>🧠 ¿Por qué se adapta el plato?</h3>
+        
+        <div class="guide-item">
+          <div class="guide-bullet">🥩</div>
+          <div class="guide-item-content">
+            <strong>Proteína Grasa (Salmón, Huevos enteros, Ternera)</strong>
+            <p>Al comer una carne o pescado azul graso, la cuota de grasa saludable (~10%) ya viene incluida naturalmente. No necesitas añadir aceite extra o aguacate en ese plato.</p>
+          </div>
+        </div>
+
+        <div class="guide-item">
+          <div class="guide-bullet">🫘</div>
+          <div class="guide-item-content">
+            <strong>Legumbres (Lentejas, Garbanzos, Alubias)</strong>
+            <p>Aportan tanto carbohidratos de digestión lenta como proteína vegetal. Por eso se expanden ocupando ~35% del plato.</p>
+          </div>
+        </div>
+
+        <div class="guide-item">
+          <div class="guide-bullet">🥦</div>
+          <div class="guide-item-content">
+            <strong>50% Verduras: El Ancla Metabólica</strong>
+            <p>Volumen, agua y fibra sin almidón. Te sacian primero, reducen el pico de glucosa y nutren tu microbiota.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal: Infografía Original -->
+  <div class="modal-backdrop" id="modalOriginal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h4>Infografía de Referencia</h4>
+        <button class="modal-close" id="btnCloseOriginal">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-info">Esta es la regla visual base tomada del repositorio:</p>
+        <div class="image-wrapper">
+          <img src="reglaDieta.jpg" alt="Regla de la dieta - Diseña tu plato" id="refImage" />
+        </div>
+        <p class="modal-footnote">50% Verduras sin almidón · 25% Carbohidratos granos enteros · 25% Alimentos animales magros o con grasa integrada.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Platos del Chef (Inspiración Rápida) -->
+  <div class="modal-backdrop" id="modalChef">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h4>⚡ Platos Listos para Inspirarte</h4>
+        <button class="modal-close" id="btnCloseChef">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-info">Toca cualquier plato para cargarlo automáticamente en tu panel:</p>
+        <div class="chef-recipes-list" id="chefRecipesList">
+          <!-- Renderizado dinámicamente -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal / Drawer de Selección Rápida para una Zona -->
+  <div class="modal-backdrop" id="modalZonePicker">
+    <div class="modal-dialog bottom-sheet">
+      <div class="modal-header">
+        <div class="modal-header-titles">
+          <h4 id="zonePickerTitle">Elige un alimento</h4>
+          <span id="zonePickerSubtitle" class="picker-subtitle"></span>
+        </div>
+        <button class="modal-close" id="btnCloseZonePicker">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="zone-foods-grid" id="zoneFoodsGrid">
+          <!-- Opciones para la zona clicada -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast de Notificación -->
+  <div class="toast-notification" id="toastNotification">
+    <span id="toastMessage">Plato copiado al portapapeles</span>
+  </div>
+
+  <!-- Footer con créditos y nota de comida real -->
+  <footer class="app-footer">
+    <p>🍃 <strong>Comida Real y Limpia</strong> · Sin ultraprocesados</p>
+    <p class="footer-note">Diseñado para móvil y publicado en GitHub Pages</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
